@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delta Abbott - Homepage</title>
+  
+  <!-- Google Fonts: Playfair Display for headings, Lato for body text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* Root variables for easy color/theme management */
+    :root {
+      --primary-color: #FF6C65; /* accent (CTA) */
+      --secondary-color: #72E0E2;
+      --tertiary-color: #FFD166;
+
+      --light-bg: #fdfdfd; 
+      --dark-bg: #1A1A1A;
+      --light-text: #2D2D2D;
+      --dark-text: #FAFAFA;
+    }
+
+    /* Basic reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Lato', sans-serif; /* default body font */
+      background-color: var(--light-bg);
+      color: var(--light-text);
+      transition: background-color 0.4s ease, color 0.4s ease;
+      scroll-behavior: smooth;
+    }
+
+    /* Subtle background pattern for the light mode */
+    body {
+      background-image: url('neutral-pattern.png');
+      background-repeat: repeat;
+      background-size: 400px 400px; /* adjust as needed */
+    }
+
+    /* For dark mode, we want to remove or change the pattern to something that looks subtle on dark backgrounds */
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+
+      /* Potential alternative for dark mode pattern 
+         or simply remove the pattern on dark mode: 
+         background-image: none; 
+      */
+      background-image: none;
+    }
+
+    /* Container for everything */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(5px);
+      z-index: 999;
+      transition: background-color 0.4s;
+    }
+    body:not(.dark-mode) header {
+      background-color: rgba(255,255,255,0.9);
+    }
+    body.dark-mode header {
+      background-color: rgba(26, 26, 26, 0.9);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    /* Replaced text-based logo with an image placeholder */
+    .nav-left img {
+      width: 120px; /* adjust size as desired */
+      height: auto;
+      display: block;
+    }
+
+    /* Desktop Menu */
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links li a {
+      text-decoration: none;
+      font-weight: 600;
+      color: inherit;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-links li a::after {
+      content: "";
+      position: absolute;
+      height: 2px;
+      width: 0;
+      left: 0;
+      bottom: -3px;
+      background-color: var(--primary-color);
+      transition: width 0.3s;
+    }
+    .nav-links li a:hover::after {
+      width: 100%;
+    }
+
+    /* Mobile Menu (hidden by default) */
+    .mobile-menu-icon {
+      display: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mobile-menu-icon div {
+      width: 25px;
+      height: 3px;
+      background-color: currentColor;
+      margin: 5px 0;
+      transition: all 0.3s;
+    }
+
+    /* Show/hide the mobile nav when toggled */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      height: 100%;
+      width: 60%;
+      background-color: var(--light-bg);
+      color: var(--light-text);
+      transition: left 0.3s ease;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+    }
+    .mobile-nav.show {
+      left: 0;
+    }
+    body.dark-mode .mobile-nav {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+    }
+    .mobile-nav a {
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: inherit;
+    }
+
+    /* Toggle Container (Light/Dark Mode) */
+    .toggle-container {
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      width: 100px;
+      height: 30px;
+      background-color: var(--secondary-color);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* The text that shows either "Dark Mode" or "Light Mode" */
+    .toggle-text {
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: bold;
+      position: absolute;
+      transition: opacity 0.3s;
+    }
+
+    /* We'll create a "wipe" animation by moving a colored overlay */
+    .toggle-overlay {
+      position: absolute;
+      top: 0; 
+      bottom: 0; 
+      background-color: var(--primary-color);
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    /* We'll also have a "left-to-right" or "right-to-left" logic in JS. */
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .hero-subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s forwards;
+      animation-delay: 0.2s;
+    }
+    .cta-button {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s, transform 0.3s;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s forwards;
+      animation-delay: 0.4s;
+    }
+    /* More noticeable hover color shift for the CTA */
+    .cta-button:hover {
+      background-color: #d65c56;
+      transform: scale(1.05);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none; /* hide desktop nav */
+      }
+      .mobile-menu-icon {
+        display: block;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="nav-left">
+          <!-- Replace 'my-logo.png' with your actual file name -->
+          <img src="my-logo.png" alt="Delta's Logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Designs</a></li>
+          <li><a href="#">Case Study</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+
+        <!-- Mobile menu icon -->
+        <div class="mobile-menu-icon" id="mobileMenuIcon">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <!-- Light/Dark toggle container -->
+        <div class="toggle-container" id="themeToggle">
+          <div class="toggle-overlay" id="toggleOverlay"></div>
+          <span class="toggle-text" id="toggleText">Dark Mode</span>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Mobile nav slider -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Designs</a>
+      <a href="#">Case Study</a>
+      <a href="#">Contact</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 class="hero-title">Delta Abbott</h1>
+      <p class="hero-subtitle">
+        A UX/UI Designer creating epic + cool user experiences
+      </p>
+      <button class="cta-button">See My Work</button>
+    </section>
+  </main>
+
+  <script>
+    // Mobile nav toggle
+    const mobileMenuIcon = document.getElementById('mobileMenuIcon');
+    const mobileNav = document.getElementById('mobileNav');
+    mobileMenuIcon.addEventListener('click', () => {
+      mobileNav.classList.toggle('show');
+    });
+
+    // Light/Dark mode toggle with a "wipe" animation
+    const themeToggle = document.getElementById('themeToggle');
+    const bodyElement = document.body;
+    const toggleText = document.getElementById('toggleText');
+    const toggleOverlay = document.getElementById('toggleOverlay');
+
+    // We'll track the current mode in a variable (true = dark, false = light)
+    let isDarkMode = false;
+
+    function applyToggleWipe() {
+      // If switching to dark mode: overlay from left to right
+      // If switching to light mode: overlay from right to left
+      if (isDarkMode) {
+        // Dark mode => Light mode: wipe from right to left
+        toggleOverlay.style.right = "0";
+        toggleOverlay.style.left = "auto";
+        toggleOverlay.style.width = "100%";
+
+        setTimeout(() => {
+          // After 300ms, remove overlay 
+          toggleOverlay.style.width = "0";
+          toggleOverlay.style.right = "auto";
+          toggleOverlay.style.left = "0";
+        }, 300);
+
+      } else {
+        // Light mode => Dark mode: wipe from left to right
+        toggleOverlay.style.left = "0";
+        toggleOverlay.style.width = "100%";
+
+        setTimeout(() => {
+          // After 300ms, remove overlay
+          toggleOverlay.style.width = "0";
+        }, 300);
+      }
+    }
+
+    function updateToggleText() {
+      if (isDarkMode) {
+        toggleText.textContent = "Light Mode";
+      } else {
+        toggleText.textContent = "Dark Mode";
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      // 1. Apply the overlay wipe effect
+      applyToggleWipe();
+
+      // 2. Toggle dark-mode class on body
+      bodyElement.classList.toggle('dark-mode');
+
+      // 3. Flip the mode boolean
+      isDarkMode = !isDarkMode;
+
+      // 4. Update text to reflect new mode
+      updateToggleText();
+    });
+  </script>
+</body>
+</html>
+
