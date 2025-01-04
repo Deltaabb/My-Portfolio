@@ -1,269 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta Tags for SEO and Responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Abbott | UX/UI Designer</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Lato', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #FFF4E6; /* Pastel Cream Background */
-            color: #2D2D2D;
-        }
-
-        h1, h2, p {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Navigation Bar */
-        nav {
-            background-color: #FF6C65;
-            color: white;
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: flex-start;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav ul li {
-            margin: 0 20px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            position: relative;
-        }
-
-        /* Hover Effect for Navigation Links */
-        nav ul li a:hover {
-            color: #FFD166;
-        }
-
-        nav ul li a::after {
-            content: '';
-            display: block;
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: transparent;
-            transition: all 0.3s ease;
-        }
-
-        /* Specific Color Hover for Each Page */
-        .about-link:hover::after {
-            background-color: #FF6C65; /* Red for About */
-        }
-
-        .contact-link:hover::after {
-            background-color: #A5D6A7; /* Green for Contact */
-        }
-
-        .designs-link:hover::after {
-            background-color: #B39DDB; /* Purple for Designs */
-        }
-
-        .case-studies-link:hover::after {
-            background-color: #FFD166; /* Yellow for Case Studies */
-        }
-
-        /* Hero Section */
-        .hero {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 80px 20px;
-            justify-content: flex-start;
-            align-items: center;
-            background-color: #FFFBF4;
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 56px;
-            color: #FF6C65;
-            width: 60%;
-            padding-left: 50px;
-        }
-
-        .hero h2 {
-            font-size: 24px;
-            color: #2D2D2D;
-            width: 50%;
-            padding-left: 50px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 30px;
-            background-color: #FF6C65;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .cta-button:hover {
-            background-color: #FFD166;
-            transform: scale(1.1); /* Enlarges the button on hover */
-        }
-
-        /* Section Layout */
-        .content-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 60px 20px;
-        }
-
-        .content-section .left,
-        .content-section .right {
-            width: 48%;
-        }
-
-        .content-section .left {
-            background-color: #72E0E2;
-            padding: 20px;
-        }
-
-        .content-section .right {
-            background-color: #FFD166;
-            padding: 20px;
-        }
-
-        /* Leafy Animation Section */
-        .leafy-section {
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            margin-top: 50px;
-        }
-
-        .plant {
-            width: 100px;
-            height: 100px;
-            position: relative;
-        }
-
-        .plant .leaf {
-            fill: #72E0E2;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .plant .leaf:hover {
-            transform: scale(1.2);
-        }
-
-        /* Animate leaf sway */
-        .plant .leaf:nth-child(1) {
-            animation: sway1 3s ease-in-out infinite;
-        }
-
-        .plant .leaf:nth-child(2) {
-            animation: sway2 3s ease-in-out infinite;
-        }
-
-        @keyframes sway1 {
-            0% {
-                transform: rotate(0deg);
-            }
-            50% {
-                transform: rotate(10deg);
-            }
-            100% {
-                transform: rotate(0deg);
-            }
-        }
-
-        @keyframes sway2 {
-            0% {
-                transform: rotate(0deg);
-            }
-            50% {
-                transform: rotate(-10deg);
-            }
-            100% {
-                transform: rotate(0deg);
-            }
-        }
-
-        /* Footer */
-        footer {
-            background-color: #FF6C65;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
-    </style>
+    <title>Delta | UX Designer Portfolio</title>
+    <meta name="description" content="Delta's UX Design Portfolio showcasing projects, skills, and design process.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#" class="home-link">Home</a></li>
-            <li><a href="#about" class="about-link">About</a></li>
-            <li><a href="#designs" class="designs-link">Designs</a></li>
-            <li><a href="#case-studies" class="case-studies-link">Case Studies</a></li>
-            <li><a href="#contact" class="contact-link">Contact</a></li>
-        </ul>
-    </nav>
+    <!-- Header with Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <a href="#home">Delta</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Case Studies</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <!-- Light/Dark Mode Toggle -->
+            <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">
+                🌊
+            </button>
+            <!-- Hamburger Menu for Mobile -->
+            <button class="hamburger" aria-label="Toggle Navigation">
+                ☰
+            </button>
+        </nav>
+    </header>
 
-    <div class="hero">
-        <h1>Delta Abbott</h1>
-        <h2>A UX/UI Designer creating epic + cool user experiences</h2>
-        <a href="#work" class="cta-button">See My Work</a>
-    </div>
+    <!-- Hero Section -->
+    <main id="home">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Hi, I’m Delta! 👋</h1>
+                <p>I create delightful user experiences.</p>
+                <a href="#projects" class="cta-button">Explore My Work ➡️</a>
+            </div>
+            <!-- Background Illustration Placeholder -->
+            <div class="hero-illustration">
+                <!-- Insert an SVG or image here -->
+            </div>
+        </section>
 
-    <div class="content-section">
-        <div class="left">
-            <h2>About Me</h2>
-            <p>I’m a UX Designer with 5 years of experience as a freelance graphic designer. My creativity and passion for connecting with people make me an effective collaborator...</p>
-        </div>
-        <div class="right">
-            <h2>My Work</h2>
-            <p>Here is a collection of the designs I’ve worked on. Check out the variety of creative work that shows my range of skills in UX/UI design...</p>
-        </div>
-    </div>
+        <!-- Skills/Approach Overview -->
+        <section class="skills">
+            <h2>My UX Expertise</h2>
+            <div class="skills-container">
+                <div class="skill-item">
+                    <span>🎨</span>
+                    <h3>User-Centered Design</h3>
+                    <p>Focusing on the needs and behaviors of users to create intuitive interfaces.</p>
+                </div>
+                <div class="skill-item">
+                    <span>🔍</span>
+                    <h3>Research & Analysis</h3>
+                    <p>Conducting thorough UX research to inform design decisions.</p>
+                </div>
+                <div class="skill-item">
+                    <span>🚀</span>
+                    <h3>Prototyping & Testing</h3>
+                    <p>Building prototypes and conducting user testing to refine designs.</p>
+                </div>
+            </div>
+        </section>
 
-    <!-- Leafy Animated Section -->
-    <div class="leafy-section">
-        <div class="plant">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-                <path class="leaf" d="M50 25 C40 40, 30 50, 40 65 C50 80, 60 70, 50 50 C40 40, 50 25, 50 25" />
-            </svg>
-        </div>
+        <!-- Featured Projects -->
+        <section class="featured-projects" id="projects">
+            <h2>Featured Projects</h2>
+            <div class="projects-container">
+                <!-- Project Card 1 -->
+                <div class="project-card">
+                    <img src="project1-thumbnail.webp" alt="Project 1 Thumbnail">
+                    <div class="project-info">
+                        <h3>Project One</h3>
+                        <p>A brief description of Project One.</p>
+                        <a href="#project1" class="project-link">View Case Study ➡️</a>
+                    </div>
+                </div>
+                <!-- Project Card 2 -->
+                <div class="project-card">
+                    <img src="project2-thumbnail.webp" alt="Project 2 Thumbnail">
+                    <div class="project-info">
+                        <h3>Project Two</h3>
+                        <p>A brief description of Project Two.</p>
+                        <a href="#project2" class="project-link">View Case Study ➡️</a>
+                    </div>
+                </div>
+                <!-- Project Card 3 -->
+                <div class="project-card">
+                    <img src="project3-thumbnail.webp" alt="Project 3 Thumbnail">
+                    <div class="project-info">
+                        <h3>Project Three</h3>
+                        <p>A brief description of Project Three.</p>
+                        <a href="#project3" class="project-link">View Case Study ➡️</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        <div class="plant">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-                <path class="leaf" d="M50 30 C55 35, 70 45, 65 55 C60 65, 50 60, 45 50 C40 40, 50 30, 50 30" />
-            </svg>
-        </div>
-
-        <div class="plant">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-                <path class="leaf" d="M50 35 C45 50, 40 60, 45 70 C50 75, 60 70, 60 60 C55 50, 50 35, 50 35" />
-            </svg>
-        </div>
-    </div>
-
+    <!-- Footer -->
     <footer>
-        <p>© 2025 Delta Abbott | UX/UI Designer</p>
+        <div class="footer-content">
+            <p>&copy; 2025 Delta. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#contact">Contact</a>
+                <a href="https://linkedin.com/in/delta" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://behance.net/delta" target="_blank" rel="noopener">Behance</a>
+            </div>
+        </div>
     </footer>
+
+    <!-- External JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
