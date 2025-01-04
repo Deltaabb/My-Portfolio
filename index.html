@@ -10,11 +10,382 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
-    <!-- External CSS -->
-    <link rel="stylesheet" href="my-portfolio/style.css">
-    
-    <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- Embedded CSS -->
+    <style>
+        /* CSS Reset for Consistency Across Browsers */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Root Variables for Light and Dark Themes */
+        :root {
+            --primary-color: #FF4F5A; /* Playful coral red */
+            --bg-color-light: #FFFFFF;
+            --bg-color-dark: #121212;
+            --text-color-light: #212121;
+            --text-color-dark: #FAFAFA;
+            --accent-color: #F7F7F7;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Lato', sans-serif;
+            --transition-speed: 0.3s;
+        }
+        
+        body.light-theme {
+            --bg-color: var(--bg-color-light);
+            --text-color: var(--text-color-light);
+        }
+        
+        body.dark-theme {
+            --bg-color: var(--bg-color-dark);
+            --text-color: var(--text-color-dark);
+        }
+        
+        /* Global Styles */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Header and Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        .logo a {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            font-weight: 700;
+        }
+        
+        #theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 1rem;
+            transition: transform var(--transition-speed);
+        }
+        
+        #theme-toggle:hover {
+            transform: rotate(20deg);
+        }
+        
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        /* Responsive Navigation */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                width: 60%;
+                background-color: var(--bg-color);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                transition: left var(--transition-speed);
+            }
+        
+            .nav-links.active {
+                left: 0;
+            }
+        
+            .hamburger {
+                display: block;
+            }
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #FF4F5A 30%, #F7F7F7 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 50%;
+        }
+        
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: transform var(--transition-speed);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Hero Illustration (Placeholder) */
+        .hero-illustration {
+            max-width: 45%;
+            /* Insert actual illustration styles or background image here */
+        }
+        
+        /* Skills Section */
+        .skills {
+            padding: 3rem 2rem;
+            background-color: var(--accent-color);
+            text-align: center;
+        }
+        
+        .skills h2 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .skills-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .skill-item {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            width: 30%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform var(--transition-speed);
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .skill-item span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        
+        .skill-item h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-item p {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+        
+        /* Featured Projects Section */
+        .featured-projects {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .featured-projects h2 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .projects-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .project-card {
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            transition: transform var(--transition-speed);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .project-card img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .project-info {
+            padding: 1rem;
+        }
+        
+        .project-info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-info p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .project-link {
+            background-color: var(--primary-color);
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            transition: background-color var(--transition-speed);
+        }
+        
+        .project-link:hover {
+            background-color: #e04e57;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--bg-color);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-links {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        
+        .footer-links a {
+            font-weight: 700;
+        }
+        
+        /* Light/Dark Mode Transition */
+        body {
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        /* Animations */
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        #theme-toggle {
+            animation: wave 2s infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+        
+            .hero-content, .hero-illustration {
+                max-width: 100%;
+            }
+        
+            .skills-container, .projects-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .skill-item, .project-card {
+                width: 80%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 1rem;
+            }
+        
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        
+            .cta-button {
+                padding: 0.5rem 1rem;
+                font-size: 1rem;
+            }
+        
+            .skills-container, .projects-container {
+                gap: 1rem;
+            }
+        
+            .skill-item, .project-card {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header with Navigation -->
@@ -31,7 +402,7 @@
             </ul>
             <!-- Light/Dark Mode Toggle -->
             <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">
-                🌊
+                🌞
             </button>
             <!-- Hamburger Menu for Mobile -->
             <button class="hamburger" aria-label="Toggle Navigation">
@@ -44,7 +415,7 @@
     <main id="home">
         <section class="hero">
             <div class="hero-content">
-                <h1>Hi, I’m Dddelta! 👋</h1>
+                <h1>Hi, I’m Delta! 👋</h1>
                 <p>I create delightful user experiences.</p>
                 <a href="#projects" class="cta-button">Explore My Work ➡️</a>
             </div>
@@ -55,7 +426,7 @@
         </section>
 
         <!-- Skills/Approach Overview -->
-        <section class="skills">
+        <section class="skills" id="about">
             <h2>My UX Expertise</h2>
             <div class="skills-container">
                 <div class="skill-item">
@@ -118,4 +489,72 @@
             <div class="footer-links">
                 <a href="#contact">Contact</a>
                 <a href="https://linkedin.com/in/delta" target="_blank" rel="noopener">LinkedIn</a>
-                <a href="https://behance.
+                <a href="https://behance.net/delta" target="_blank" rel="noopener">Behance</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Embedded JavaScript -->
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Function to toggle between light and dark themes
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            body.classList.toggle('light-theme');
+
+            // Update toggle button icon
+            if (body.classList.contains('dark-theme')) {
+                themeToggle.textContent = '🌙'; // Moon emoji
+            } else {
+                themeToggle.textContent = '🌞'; // Sun emoji
+            }
+
+            // Save user preference in localStorage
+            if (body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Event Listener for Theme Toggle Button
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Function to load the saved theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-theme');
+                themeToggle.textContent = '🌙';
+            } else {
+                body.classList.add('light-theme');
+                themeToggle.textContent = '🌞';
+            }
+        }
+
+        // Initialize Theme on Page Load
+        loadTheme();
+
+        // Hamburger Menu Toggle
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            // Animate Hamburger Icon (optional)
+            hamburger.classList.toggle('active');
+        });
+
+        // Close the mobile menu when a link is clicked
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
