@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Delta's UX/UI Portfolio</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <!-- Embedded CSS -->
   <style>
     /* General Styles */
@@ -16,6 +16,11 @@
       --light-text: #212121;
       --dark-text: #FAFAFA;
       --transition-speed: 0.3s;
+      --friendly-black: #333333;
+      --pastel-blue: #A8D8EA;
+      --pastel-purple: #CABBE9;
+      --off-white: #F9F9F9;
+      --pastel-green: #C7F0BD;
     }
 
     body {
@@ -76,6 +81,48 @@
 
     nav ul li a {
       font-weight: bold;
+      color: var(--friendly-black);
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: transparent;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+      transform: scaleX(0);
+      transform-origin: bottom right;
+    }
+
+    nav ul li a:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+
+    nav ul li:nth-child(1) a:hover::after {
+      background-color: #FF4F5A; /* Red */
+    }
+
+    nav ul li:nth-child(2) a:hover::after {
+      background-color: #007BFF; /* Blue */
+    }
+
+    nav ul li:nth-child(3) a:hover::after {
+      background-color: #FFC107; /* Yellow */
+    }
+
+    nav ul li:nth-child(4) a:hover::after {
+      background-color: #28A745; /* Green */
+    }
+
+    nav ul li a.active {
+      font-weight: bold;
+      color: var(--primary-cta);
     }
 
     .hamburger {
@@ -99,21 +146,26 @@
     /* Light/Dark Mode Toggle */
     .mode-toggle {
       position: relative;
-      width: 50px;
-      height: 30px;
-      background: var(--primary-cta);
-      border-radius: 15px;
+      width: 40px;
+      height: 20px;
+      background: #CCCCCC;
+      border-radius: 10px;
       cursor: pointer;
       overflow: hidden;
+      margin-left: 10px;
+    }
+
+    body.dark-mode .mode-toggle {
+      background: #666666;
     }
 
     .mode-toggle::before {
       content: '';
       position: absolute;
       top: 50%;
-      left: 5px;
-      width: 20px;
-      height: 20px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
       background: var(--light-bg);
       border-radius: 50%;
       transform: translateY(-50%);
@@ -121,13 +173,43 @@
     }
 
     body.dark-mode .mode-toggle::before {
-      left: 25px;
+      left: 22px;
+      background: var(--dark-bg);
+    }
+
+    .mode-toggle-label {
+      font-size: 0.9rem;
+      color: var(--friendly-black);
+      margin-right: 5px;
+    }
+
+    body.dark-mode .mode-toggle-label {
+      color: var(--dark-text);
     }
 
     /* Hero Section */
     .hero {
-      text-align: center;
-      padding: 5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5rem;
+      background: linear-gradient(to bottom, var(--pastel-blue), #F7F7F7);
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 38.2%; /* Golden ratio */
+      width: 2px;
+      height: 100%;
+      background-color: var(--pastel-purple);
+    }
+
+    .hero .content {
+      flex: 1;
+      padding-right: 2rem;
     }
 
     .hero h1 {
@@ -139,6 +221,12 @@
       font-size: 1.25rem;
       max-width: 600px;
       margin: 0 auto;
+    }
+
+    .hero p strong {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
     }
 
     .hero .cta {
@@ -158,12 +246,16 @@
       }
     }
 
+    .hero .frame {
+      flex: 0 0 38.2%; /* Golden ratio */
+      background-color: var(--pastel-purple);
+      height: 100%;
+    }
+
     /* Project Cards */
     .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
       padding: 2rem;
+      background-color: var(--off-white);
     }
 
     .project-card {
@@ -172,6 +264,10 @@
       overflow: hidden;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      border: 2px solid transparent;
+      margin: 2rem 0;
+      max-width: 800px;
+      margin-left: 200px; /* Asymmetrical placement */
     }
 
     body.dark-mode .project-card {
@@ -181,6 +277,7 @@
     .project-card:hover {
       transform: scale(1.05);
       box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+      border-color: var(--primary-cta);
     }
 
     .project-card img {
@@ -203,12 +300,12 @@
     footer {
       text-align: center;
       padding: 2rem;
-      background: var(--light-bg);
-      transition: background-color var(--transition-speed);
+      background-color: var(--pastel-green);
+      border-top: 5px dashed var(--primary-cta);
     }
 
     body.dark-mode footer {
-      background: var(--dark-bg);
+      background-color: #1E1E1E;
     }
 
     footer .social-links {
@@ -217,6 +314,14 @@
 
     footer .social-links a {
       margin: 0 0.5rem;
+    }
+
+    footer .privacy-policy {
+      margin-top: 1rem;
+    }
+
+    footer .privacy-policy a {
+      color: var(--primary-cta);
     }
 
     /* Responsive Design */
@@ -263,12 +368,15 @@
     <nav>
       <div class="logo">Delta</div>
       <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About Me</a></li>
-        <li><a href="#work">My Work</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About Me</a></li>
+        <li><a href="mywork.html">My Work</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
-      <div class="mode-toggle" onclick="toggleMode()"></div>
+      <div class="mode-toggle-container">
+        <span class="mode-toggle-label">Dark Mode</span>
+        <div class="mode-toggle" onclick="toggleMode()"></div>
+      </div>
       <div class="hamburger" onclick="toggleMenu()">
         <span></span>
         <span></span>
@@ -279,26 +387,29 @@
 
   <!-- Hero Section -->
   <section id="home" class="hero">
-    <h1>Hello! 👋</h1>
-    <p>Who am I? I’m Delta, a UX/UI designer who makes user experiences that don’t suck.</p>
-    <p>What I do? I focus on designs that look great, feel natural, and actually work. No fluff, just good design.</p>
-    <a href="#work" class="cta">Check out my work! ↓</a>
+    <div class="content">
+      <h1>Hello! 👋</h1>
+      <p><strong>Who am I?</strong> I’m Delta, a UX/UI designer who makes user experiences that don’t suck.</p>
+      <p><strong>What do I do?</strong> I focus on designs that look great, feel natural, and actually work. No fluff, just good design.</p>
+      <a href="#work" class="cta">Check out my work! ↓</a>
+    </div>
+    <div class="frame"></div>
   </section>
 
   <!-- Projects Section -->
   <section id="work" class="projects">
     <div class="project-card">
-      <img src="https://via.placeholder.com/300x200" alt="Mia’s Patisserie">
+      <img src="mias1.png" alt="Mia’s Patisserie">
       <h3>Mia’s Patisserie</h3>
       <p>Ever found yourself at a restaurant with a big group, awkwardly passing a phone around so everyone can choose their order? Mia’s Patisserie is a mobile food menu and ordering app designed to make group ordering simple, fun, and seamless.</p>
     </div>
     <div class="project-card">
-      <img src="https://via.placeholder.com/300x200" alt="Portfolio Website">
+      <img src="website1.png" alt="Portfolio Website">
       <h3>Portfolio Website</h3>
       <p>Curious about the thought process behind this website? Explore its features firsthand and discover the ideas that brought it to life.</p>
     </div>
     <div class="project-card">
-      <img src="https://via.placeholder.com/300x200" alt="Neon Line Art Collection">
+      <img src="sulphur1.png" alt="Neon Line Art Collection">
       <h3>Neon Line Art Collection</h3>
       <p>What began as a fun experiment turned into a series of bold, custom illustrations brought to life in glowing neon lines.</p>
     </div>
@@ -308,10 +419,11 @@
   <footer>
     <div class="social-links">
       <a href="#">LinkedIn</a>
-      <a href="#">Behance</a>
-      <a href="#">Dribbble</a>
     </div>
-    <p>© 2023 Delta. All rights reserved.</p>
+    <div class="privacy-policy">
+      <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Use</a>
+    </div>
+    <p>© 2025 Delta. All rights reserved.</p>
   </footer>
 
   <!-- Embedded JavaScript -->
@@ -328,6 +440,15 @@
       navUl.classList.toggle('active');
       hamburger.classList.toggle('active');
     }
+
+    // Highlight Active Page in Navigation
+    const navLinks = document.querySelectorAll('nav ul li a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
   </script>
 </body>
 </html>
