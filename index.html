@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Delta's UX/UI Portfolio</title>
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Nexa:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <!-- Embedded CSS -->
   <style>
     /* General Styles */
@@ -40,7 +40,13 @@
     }
 
     h1, h2, h3 {
-      font-family: 'Nexa', sans-serif;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; /* Poppins Bold for headings */
+    }
+
+    p {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400; /* Poppins Regular for subheadings */
     }
 
     a {
@@ -129,7 +135,7 @@
     }
 
     .logo {
-      font-family: 'Nexa', sans-serif;
+      font-family: 'Poppins', sans-serif;
       font-size: 1.2rem; /* Smaller logo size */
       font-weight: bold; /* Bold font */
       padding-left: 1rem;
@@ -162,7 +168,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      padding: 5rem 4rem; /* Increased left padding */
+      padding: 5rem 6rem; /* Increased left padding */
       background-color: var(--pastel-warm-light);
       color: var(--light-text);
       transition: background-color var(--transition-speed);
@@ -175,6 +181,7 @@
     .hero h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
+      max-width: 66.66%; /* Text wraps at one-third of the page's width */
     }
 
     .hero p {
@@ -318,6 +325,14 @@
         height: 200px;
         margin-right: 0;
         margin-bottom: 1rem;
+      }
+
+      .hero {
+        padding: 5rem 2rem; /* Adjusted padding for smaller screens */
+      }
+
+      .hero h1 {
+        max-width: 100%; /* Full width on smaller screens */
       }
     }
   </style>
