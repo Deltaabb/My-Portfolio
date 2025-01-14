@@ -21,7 +21,8 @@
       --pastel-red: #FF6F61; /* Pastel red for Home */
       --pastel-yellow: #FFD700; /* Pastel yellow for About Me */
       --pastel-green: #77DD77; /* Pastel green for My Work */
-      --pastel-blue: #A2DDF0; /* Pastel blue for Contact */
+      --pastel-blue: #77EEF2; /* Pastel blue for Contact */
+      --neutral-color: #666; /* Neutral color for button outline */
     }
 
     body {
@@ -120,28 +121,39 @@
 
     /* Current page indicator */
     nav ul li a.current-page {
-      color: var(--primary-cta); /* Highlight current page */
+      color: var(--neutral-color); /* Subtle neutral color for current page */
+    }
+
+    body.dark-mode nav ul li a.current-page {
+      color: #999; /* Lighter shade for dark mode */
     }
 
     .logo {
       font-family: 'Nexa', sans-serif;
       font-size: 1.2rem; /* Smaller logo size */
+      font-weight: bold; /* Bold font */
       padding-left: 1rem;
     }
 
+    /* Mode Toggle Button */
     .mode-toggle {
-      background: var(--primary-cta);
-      border: none;
-      color: var(--light-bg);
+      background: transparent;
+      border: 2px solid var(--neutral-color);
+      color: var(--neutral-color);
       padding: 0.5rem 1rem;
       border-radius: 5px;
       cursor: pointer;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
+      transition: border-color var(--transition-speed), color var(--transition-speed);
     }
 
     body.dark-mode .mode-toggle {
-      background: var(--primary-cta);
-      color: var(--dark-bg);
+      border-color: #999;
+      color: #999;
+    }
+
+    .mode-toggle:hover {
+      border-color: var(--primary-cta);
+      color: var(--primary-cta);
     }
 
     /* Hero Section */
@@ -314,7 +326,7 @@
   <!-- Header -->
   <header>
     <nav>
-      <div class="logo">Delta</div>
+      <div class="logo">DA</div>
       <ul>
         <li><a href="#home" class="current-page">Home</a></li>
         <li><a href="#about">About Me</a></li>
