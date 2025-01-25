@@ -1,192 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delta Abbott | UX/UI Designer</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Lato', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #FFF4E6; /* Pastel Cream Background */
-            color: #2D2D2D;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me - Delta</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+      transition: background 0.5s, color 0.5s;
+    }
 
-        h1, h2, p {
-            margin: 0;
-            padding: 0;
-        }
+    header {
+      padding: 1rem;
+      text-align: right;
+    }
 
-        /* Navigation Bar */
-        nav {
-            background-color: #FF6C65;
-            color: white;
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+    #dark-mode-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: flex-start;
-            margin: 0;
-            padding: 0;
-        }
+    main {
+      padding: 2rem;
+    }
 
-        nav ul li {
-            margin: 0 20px;
-        }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
 
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-            position: relative;
-        }
+    .tagline {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
 
-        /* Hover Effect for Navigation Links */
-        nav ul li a:hover {
-            color: #FFD166;
-        }
+    p {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
 
-        nav ul li a::after {
-            content: '';
-            display: block;
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: transparent;
-            transition: all 0.3s ease;
-        }
+    /* Layout */
+    #about-me, #personal-touch {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
 
-        /* Specific Color Hover for Each Page */
-        .about-link:hover::after {
-            background-color: #FF6C65; /* Red for About */
-        }
+    .intro-text, .personal-text {
+      flex: 1;
+    }
 
-        .contact-link:hover::after {
-            background-color: #A5D6A7; /* Green for Contact */
-        }
+    .intro-image, .personal-image {
+      flex: 1;
+      position: relative;
+    }
 
-        .designs-link:hover::after {
-            background-color: #B39DDB; /* Purple for Designs */
-        }
+    .intro-image img, .personal-image img {
+      max-width: 100%;
+      border-radius: 10px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
 
-        .case-studies-link:hover::after {
-            background-color: #FFD166; /* Yellow for Case Studies */
-        }
+    .personal-image .overlap {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 60%;
+      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    }
 
-        /* Hero Section */
-        .hero {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 80px 20px;
-            justify-content: flex-start;
-            align-items: center;
-            background-color: #FFFBF4;
-        }
+    /* Animations */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.5s forwards;
+    }
 
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 56px;
-            color: #FF6C65;
-            width: 60%;
-            padding-left: 50px;
-        }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        .hero h2 {
-            font-size: 24px;
-            color: #2D2D2D;
-            width: 50%;
-            padding-left: 50px;
-        }
+    .grow {
+      opacity: 0;
+      transform: scale(0.8);
+      animation: growIn 0.5s forwards;
+    }
 
-        .cta-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 30px;
-            background-color: #FF6C65;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
+    @keyframes growIn {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
-        .cta-button:hover {
-            background-color: #FFD166;
-            transform: scale(1.1); /* Enlarges the button on hover */
-        }
+    /* Interactivity */
+    .intro-image img:hover, .personal-image img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
 
-        /* Section Layout */
-        .content-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 60px 20px;
-        }
+    .intro-image img:active, .personal-image img:active {
+      animation: wiggle 0.3s ease-in-out;
+    }
 
-        .content-section .left,
-        .content-section .right {
-            width: 48%;
-        }
+    @keyframes wiggle {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(-5deg);
+      }
+      75% {
+        transform: rotate(5deg);
+      }
+    }
 
-        .content-section .left {
-            background-color: #72E0E2;
-            padding: 20px;
-        }
+    /* Dark Mode */
+    body.dark-mode {
+      background: #333;
+      color: #f9f9f9;
+    }
 
-        .content-section .right {
-            background-color: #FFD166;
-            padding: 20px;
-        }
+    body.dark-mode .tagline {
+      color: #ccc;
+    }
 
-        /* Footer */
-        footer {
-            background-color: #FF6C65;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-        }
-    </style>
+    /* Responsiveness */
+    @media (max-width: 768px) {
+      #about-me, #personal-touch {
+        flex-direction: column;
+      }
+
+      .intro-image, .personal-image {
+        order: -1;
+        margin-bottom: 2rem;
+      }
+
+      .personal-image .overlap {
+        position: static;
+        width: 80%;
+        margin-top: -20px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#" class="home-link">Home</a></li>
-            <li><a href="#about" class="about-link">About</a></li>
-            <li><a href="#designs" class="designs-link">Designs</a></li>
-            <li><a href="#case-studies" class="case-studies-link">Case Studies</a></li>
-            <li><a href="#contact" class="contact-link">Contact</a></li>
-        </ul>
-    </nav>
+  <header>
+    <button id="dark-mode-toggle">🌙</button>
+  </header>
 
-    <div class="hero">
-        <h1>Delta Abbott</h1>
-        <h2>A UX/UI Designer creating epic + cool user experiences</h2>
-        <a href="#work" class="cta-button">See My Work</a>
-    </div>
+  <main>
+    <section id="about-me">
+      <!-- Introduction Section -->
+      <div class="intro-text">
+        <h1>Hi, I'm Delta!</h1>
+        <p class="tagline">UX Designer & Creative Explorer</p>
+        <p class="fade-in">I’m a UX designer with a knack for turning ideas into experiences people love. With 5 years as a freelance graphic designer, I’ve worked with over 50 happy clients—creating everything from logos and branding to album art and NFT designs. (Yes, I’ve dabbled in the metaverse!)</p>
+        <p class="fade-in">I’m all about collaboration, empathy, and making sure the work clicks. Whether it’s prototyping an app or designing a poster for a live event, I’m in my element when there’s a problem to solve or a story to tell.</p>
+        <p class="fade-in">Right now, I’m looking for an entry-level UX role. I know I haven’t worked at a company before, but I’m a quick learner, adaptable, and genuinely excited to grow. I’d love the chance to show you what I can do.</p>
+      </div>
+      <div class="intro-image">
+        <img src="delta-profile.png" alt="A photo of Delta, a UX designer with a friendly smile." class="grow">
+      </div>
+    </section>
 
-    <div class="content-section">
-        <div class="left">
-            <h2>About Me</h2>
-            <p>I’m a UX Designer with 5 years of experience as a freelance graphic designer. My creativity and passion for connecting with people make me an effective collaborator...</p>
-        </div>
-        <div class="right">
-            <h2>My Work</h2>
-            <p>Here is a collection of the designs I’ve worked on. Check out the variety of creative work that shows my range of skills in UX/UI design...</p>
-        </div>
-    </div>
+    <!-- Personal Touch Section -->
+    <section id="personal-touch">
+      <div class="personal-image">
+        <img src="delta-totoro.png" alt="Delta with a Totoro illustration." class="grow">
+        <img src="jewellery1.png" alt="Delta's handmade jewelry." class="overlap grow">
+      </div>
+      <div class="personal-text">
+        <p class="fade-in">When I’m not designing, I’m usually creating or exploring. Traveling, making music, learning Swedish, trying my hand at jewelry-making—you name it. I’ve got a curious soul and a love for turning ideas into reality.</p>
+        <p class="fade-in">Want to know more? If you’re curious about my journey—like how I went from avoiding drawing as a kid to falling in love with UX design—check out my full story [here].</p>
+        <p class="fade-in">Let’s create something awesome together. Or just geek out about design, music, or pole fitness (yes, really).</p>
+      </div>
+    </section>
+  </main>
 
-    <footer>
-        <p>© 2025 Delta Abbott | UX/UI Designer</p>
-    </footer>
+  <script>
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+
+    darkModeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      const isDarkMode = body.classList.contains('dark-mode');
+      darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+      localStorage.setItem('dark-mode', isDarkMode);
+    });
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('dark-mode') === 'true';
+    if (savedDarkMode) {
+      body.classList.add('dark-mode');
+      darkModeToggle.textContent = '☀️';
+    }
+  </script>
 </body>
 </html>
