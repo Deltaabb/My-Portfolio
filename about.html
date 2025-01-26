@@ -6,27 +6,123 @@
   <title>About Me - Delta</title>
   <style>
     /* General Styles */
+    :root {
+      --light-bg: #f9f9f9;
+      --dark-bg: #333;
+      --neutral-color: #333;
+      --transition-speed: 0.3s;
+    }
+
     body {
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background: #f9f9f9;
-      color: #333;
-      transition: background 0.5s, color 0.5s;
+      background: var(--light-bg);
+      color: var(--neutral-color);
+      transition: background var(--transition-speed), color var(--transition-speed);
     }
 
+    body.dark-mode {
+      background: var(--dark-bg);
+      color: #f9f9f9;
+    }
+
+    body.dark-mode .tagline {
+      color: #ccc;
+    }
+
+    /* Header and Navigation */
     header {
-      padding: 1rem;
-      text-align: right;
+      position: sticky;
+      top: 0;
+      background-color: var(--light-bg);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: background-color var(--transition-speed);
     }
 
-    #dark-mode-toggle {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
+    body.dark-mode header {
+      background-color: var(--dark-bg);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: var(--neutral-color);
+      font-weight: bold;
+      padding-bottom: 5px;
+      transition: color var(--transition-speed);
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background-color: var(--neutral-color);
+      transition: width var(--transition-speed), transform var(--transition-speed);
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+      transform: translateY(5px);
+    }
+
+    nav ul li a.current-page {
+      color: var(--neutral-color);
+    }
+
+    body.dark-mode nav ul li a.current-page {
+      color: #999;
+    }
+
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding-left: 1rem;
+    }
+
+    .mode-toggle {
+      background: transparent;
+      border: 2px solid var(--neutral-color);
+      color: var(--neutral-color);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
       cursor: pointer;
+      transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
     }
 
+    body.dark-mode .mode-toggle {
+      border-color: #999;
+      color: #999;
+    }
+
+    .mode-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
     main {
       padding: 2rem;
     }
@@ -128,16 +224,6 @@
       }
     }
 
-    /* Dark Mode */
-    body.dark-mode {
-      background: #333;
-      color: #f9f9f9;
-    }
-
-    body.dark-mode .tagline {
-      color: #ccc;
-    }
-
     /* Responsiveness */
     @media (max-width: 768px) {
       #about-me, #personal-touch {
@@ -158,10 +244,21 @@
   </style>
 </head>
 <body>
+  <!-- Navigation Bar -->
   <header>
-    <button id="dark-mode-toggle">🌙</button>
+    <nav>
+      <div class="logo">DA</div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="current-page">About Me</a></li>
+        <li><a href="mywork.html">My Work</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
+    </nav>
   </header>
 
+  <!-- Main Content -->
   <main>
     <section id="about-me">
       <!-- Introduction Section -->
@@ -192,22 +289,20 @@
   </main>
 
   <script>
-    // Dark Mode Toggle
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
-
-    darkModeToggle.addEventListener('click', () => {
+    // Light/Dark Mode Toggle
+    function toggleMode() {
+      const body = document.body;
+      const modeToggle = document.querySelector('.mode-toggle');
       body.classList.toggle('dark-mode');
-      const isDarkMode = body.classList.contains('dark-mode');
-      darkModeToggle.textContent = isDarkMode ? '☀️' : '🌙';
-      localStorage.setItem('dark-mode', isDarkMode);
-    });
+      modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      localStorage.setItem('dark-mode', body.classList.contains('dark-mode'));
+    }
 
     // Check for saved dark mode preference
     const savedDarkMode = localStorage.getItem('dark-mode') === 'true';
     if (savedDarkMode) {
-      body.classList.add('dark-mode');
-      darkModeToggle.textContent = '☀️';
+      document.body.classList.add('dark-mode');
+      document.querySelector('.mode-toggle').textContent = 'Light Mode';
     }
   </script>
 </body>
