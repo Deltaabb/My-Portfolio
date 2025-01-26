@@ -1,21 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
-<title>Page Title</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="">
-<style>
-</style>
-<script src=""></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Work - Delta's Portfolio</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a; /* Dark background */
+      color: #ffffff; /* White text */
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    /* Grid Layout */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+      gap: 20px; /* Space between images */
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .project-grid img {
+      width: 100%; /* Make images fill their grid cells */
+      height: auto; /* Maintain aspect ratio */
+      border-radius: 10px; /* Rounded corners */
+      transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+    }
+
+    .project-grid img:hover {
+      transform: scale(1.05); /* Slightly enlarge on hover */
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3); /* Glow effect */
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #000000; /* Darker footer */
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
+  <header>
+    <h1>My Work</h1>
+  </header>
 
-<img src="img_la.jpg" alt="LA" style="width:100%">
+  <main>
+    <div class="project-grid">
+      <img src="Images/My Work/backtoyou.png" alt="Back to You Project">
+      <img src="Images/My Work/escape.png" alt="Escape Project">
+      <img src="Images/My Work/fluorescence.png" alt="Fluorescence Project">
+      <img src="Images/My Work/freak3000.png" alt="Freak 3000 Project">
+      <img src="Images/My Work/sulphur.png" alt="Sulphur Project">
+      <img src="Images/My Work/tonight.png" alt="Tonight Project">
+      <img src="Images/My Work/voyager.png" alt="Voyager Project">
+    </div>
+  </main>
 
-<div class="">
- <h1>This is MY WORK</h1>
- <p>This is a paragraph.</p>
- <p>This is another paragraph.</p>
-</div>
-
+  <footer>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <p>&copy; 2023 Delta. All rights reserved.</p>
+  </footer>
 </body>
 </html>
