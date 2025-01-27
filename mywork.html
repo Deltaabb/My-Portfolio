@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Work - Delta's Portfolio</title>
+  <title>About Me - Delta's Portfolio</title>
   <style>
     /* General Styles */
     :root {
@@ -16,29 +16,20 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: var(--light-bg);
-      color: var(--neutral-color);
+      background-color: var(--dark-bg); /* Dark mode only */
+      color: #ffffff; /* White text for dark mode */
       transition: background-color var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode {
-      background-color: var(--dark-bg);
-      color: #ffffff;
     }
 
     /* Navigation Bar */
     header {
       position: sticky;
       top: 0;
-      background-color: var(--light-bg);
+      background-color: var(--dark-bg); /* Dark mode only */
       padding: 1rem 2rem;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode header {
-      background-color: var(--dark-bg);
     }
 
     nav {
@@ -62,13 +53,9 @@
     nav ul li a {
       text-decoration: none;
       font-weight: bold;
-      color: var(--neutral-color);
+      color: #ffffff; /* White text for dark mode */
       padding-bottom: 5px;
       transition: color var(--transition-speed);
-    }
-
-    body.dark-mode nav ul li a {
-      color: #ffffff;
     }
 
     nav ul li a::after {
@@ -78,12 +65,8 @@
       left: 0;
       width: 0;
       height: 3px;
-      background-color: var(--neutral-color);
+      background-color: #ffffff; /* White underline for dark mode */
       transition: width var(--transition-speed), transform var(--transition-speed);
-    }
-
-    body.dark-mode nav ul li a::after {
-      background-color: #ffffff;
     }
 
     nav ul li a:hover::after {
@@ -92,11 +75,7 @@
     }
 
     nav ul li a.current-page {
-      color: var(--neutral-color);
-    }
-
-    body.dark-mode nav ul li a.current-page {
-      color: #999;
+      color: #999; /* Current page indicator for dark mode */
     }
 
     .logo {
@@ -104,116 +83,53 @@
       font-size: 1.2rem;
       font-weight: bold;
       padding-left: 1rem;
-      color: var(--neutral-color);
+      color: #ffffff; /* White text for dark mode */
       transition: color var(--transition-speed);
-    }
-
-    body.dark-mode .logo {
-      color: #ffffff;
     }
 
     .mode-toggle {
       background: transparent;
-      border: 2px solid var(--neutral-color);
-      color: var(--neutral-color);
+      border: 2px solid #999; /* Dark mode border color */
+      color: #999; /* Dark mode text color */
       padding: 0.5rem 1rem;
       border-radius: 5px;
       cursor: pointer;
       transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
     }
 
-    body.dark-mode .mode-toggle {
-      border-color: #999;
-      color: #999;
-    }
-
     .mode-toggle:hover {
       transform: scale(1.1);
     }
 
-    /* Grid Layout */
-    .project-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      padding: 20px;
-      max-width: 1200px;
+    /* Main Content */
+    main {
+      padding: 2rem;
+      max-width: 800px;
       margin: 0 auto;
     }
 
-    .project-grid img {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-      cursor: pointer;
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
 
-    .project-grid img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 1001;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 10px;
-    }
-
-    .modal .close {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      color: #ffffff;
-      font-size: 2rem;
-      cursor: pointer;
-    }
-
-    /* Parallax Effect */
-    .project-grid img {
-      transition: transform 0.5s ease;
-    }
-
-    .project-grid img:hover {
-      transform: scale(1.1) translateY(-10px);
+    p {
+      line-height: 1.6;
     }
 
     /* Footer */
     footer {
       text-align: center;
       padding: 20px;
-      background-color: var(--light-bg);
+      background-color: var(--dark-bg); /* Dark mode only */
       margin-top: 40px;
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode footer {
-      background-color: var(--dark-bg);
     }
 
     footer a {
-      color: var(--neutral-color);
+      color: #ffffff; /* White text for dark mode */
       text-decoration: none;
       margin: 0 10px;
       transition: color var(--transition-speed);
-    }
-
-    body.dark-mode footer a {
-      color: #ffffff;
     }
 
     footer a:hover {
@@ -228,8 +144,8 @@
       <div class="logo">DA</div>
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About Me</a></li>
-        <li><a href="mywork.html" class="current-page">My Work</a></li>
+        <li><a href="about.html" class="current-page">About Me</a></li>
+        <li><a href="mywork.html">My Work</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
       <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
@@ -238,33 +154,13 @@
 
   <!-- Main Content -->
   <main>
-    <div class="project-grid">
-      <img src="Images/My Work/5yearslater.jpg" alt="5 Years Later Project">
-      <img src="Images/My Work/electricity.png" alt="Electricity Project">
-      <img src="Images/My Work/gaia.png" alt="Gaia Project">
-      <img src="Images/My Work/lostinspace.jpg" alt="Lost in Space Project">
-      <img src="Images/My Work/mungdart.png" alt="Mung Dart Project">
-      <img src="Images/My Work/neverletyoufall.png" alt="Never Let You Fall Project">
-      <img src="Images/My Work/tardigrade.png" alt="Tardigrade Project">
-      <img src="Images/My Work/thenetisvast.jpg" alt="The Net is Vast Project">
-      <img src="Images/My Work/tubopus.png" alt="Tubopus Project">
-      <img src="Images/My Work/voyager2.jpg" alt="Voyager 2 Project">
-      <img src="Images/My Work/wantit.png" alt="Want It Project">
-      <img src="Images/My Work/backtoyou.png" alt="Back to You Project">
-      <img src="Images/My Work/escape.jpg" alt="Escape Project">
-      <img src="Images/My Work/fluorescence.png" alt="Fluorescence Project">
-      <img src="Images/My Work/freak3000.jpg" alt="Freak 3000 Project">
-      <img src="Images/My Work/sulphur.png" alt="Sulphur Project">
-      <img src="Images/My Work/tonight.jpg" alt="Tonight Project">
-      <img src="Images/My Work/voyager1.png" alt="Voyager 1 Project">
-    </div>
+    <h1>About Me</h1>
+    <p>
+      Hi, I'm Delta! I'm a UX designer with a passion for creating fun, engaging, and user-friendly experiences. 
+      I love solving problems through design and bringing ideas to life. When I'm not designing, you can find me 
+      exploring new technologies, doodling, or enjoying a good cup of coffee.
+    </p>
   </main>
-
-  <!-- Modal -->
-  <div class="modal" id="modal">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <img id="modal-image" src="" alt="Enlarged Image">
-  </div>
 
   <!-- Footer -->
   <footer>
@@ -274,9 +170,8 @@
     <p>&copy; 2023 Delta. All rights reserved.</p>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- JavaScript for Light/Dark Mode Toggle -->
   <script>
-    // Light/Dark Mode Toggle
     function toggleMode() {
       const body = document.body;
       const modeToggle = document.querySelector('.mode-toggle');
@@ -284,21 +179,9 @@
       modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
     }
 
-    // Modal Functionality
-    const modal = document.getElementById('modal');
-    const modalImage = document.getElementById('modal-image');
-
-    document.querySelectorAll('.project-grid img').forEach(img => {
-      img.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        modalImage.src = img.src;
-        modalImage.alt = img.alt;
-      });
-    });
-
-    function closeModal() {
-      modal.style.display = 'none';
-    }
+    // Force dark mode on page load
+    document.body.classList.add('dark-mode');
+    document.querySelector('.mode-toggle').textContent = 'Light Mode';
   </script>
 </body>
 </html>
