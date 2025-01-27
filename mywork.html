@@ -102,7 +102,7 @@
       gap: 20px;
     }
 
-    /* Offset Columns */
+    /* Consistent Offsets for Each Column */
     .masonry-column:nth-child(1) img:nth-child(odd) {
       margin-top: 50px; /* Offset odd images in the first column */
     }
@@ -115,7 +115,8 @@
       margin-top: 50px; /* Offset odd images in the third column */
     }
 
-    .masonry-grid img {
+    /* Ensure consistent spacing */
+    .masonry-column img {
       width: 100%;
       height: auto;
       border-radius: 10px;
@@ -123,7 +124,7 @@
       cursor: pointer;
     }
 
-    .masonry-grid img:hover {
+    .masonry-column img:hover {
       transform: scale(1.03); /* Subtler hover animation */
       box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
     }
