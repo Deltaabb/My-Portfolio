@@ -89,7 +89,7 @@
     /* Masonry Grid Layout */
     .masonry-grid {
       display: flex;
-      gap: 20px;
+      gap: 24px; /* Gap between columns */
       padding: 20px;
       max-width: 1200px;
       margin: 0 auto;
@@ -99,23 +99,20 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px; /* Spacing between images */
     }
 
-    /* Consistent Offsets for Each Column */
-    .masonry-column:nth-child(1) img:nth-child(odd) {
-      margin-top: 50px; /* Offset odd images in the first column */
+    /* Column 1: Invisible Spacer of 80px at the Top */
+    .masonry-column:nth-child(1) {
+      padding-top: 80px;
     }
 
-    .masonry-column:nth-child(2) img:nth-child(even) {
-      margin-top: 50px; /* Offset even images in the second column */
+    /* Column 3: Invisible Spacer of 32px at the Top */
+    .masonry-column:nth-child(3) {
+      padding-top: 32px;
     }
 
-    .masonry-column:nth-child(3) img:nth-child(odd) {
-      margin-top: 50px; /* Offset odd images in the third column */
-    }
-
-    /* Ensure consistent spacing */
+    /* Images in the columns */
     .masonry-column img {
       width: 100%;
       height: auto;
