@@ -7,7 +7,7 @@
   <style>
     /* General Styles */
     :root {
-      --light-bg: #f9f9f9;
+      --light-bg: #f5f5dc; /* Warm beige background */
       --dark-bg: #333;
       --neutral-color: #333;
       --transition-speed: 0.3s;
@@ -124,7 +124,7 @@
 
     /* Main Content */
     main {
-      padding: 2rem;
+      padding: 2rem 4rem; /* Increased left padding */
     }
 
     h1 {
@@ -165,6 +165,7 @@
       max-width: 100%;
       border-radius: 10px;
       transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
     }
 
     .personal-image .overlap {
@@ -173,6 +174,24 @@
       right: -20px;
       width: 60%;
       box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Image Hover Text */
+    .image-hover-text {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      color: var(--neutral-color);
+      display: none;
+      pointer-events: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .intro-image:hover .image-hover-text,
+    .personal-image:hover .image-hover-text {
+      display: block;
     }
 
     /* Animations */
@@ -263,28 +282,32 @@
     <section id="about-me">
       <!-- Introduction Section -->
       <div class="intro-text">
-        <h1>Hi, I'm Delta!</h1>
-        <p class="tagline">UX Designer & Creative Explorer</p>
-        <p class="fade-in">I’m a UX designer with a knack for turning ideas into experiences people love. With 5 years as a freelance graphic designer, I’ve worked with over 50 happy clients—creating everything from logos and branding to album art and NFT designs. (Yes, I’ve dabbled in the metaverse!)</p>
-        <p class="fade-in">I’m all about collaboration, empathy, and making sure the work clicks. Whether it’s prototyping an app or designing a poster for a live event, I’m in my element when there’s a problem to solve or a story to tell.</p>
-        <p class="fade-in">Right now, I’m looking for an entry-level UX role. I know I haven’t worked at a company before, but I’m a quick learner, adaptable, and genuinely excited to grow. I’d love the chance to show you what I can do.</p>
+        <h1>Hi, I’m Delta!</h1>
+        <p class="tagline">UX Designer + Innovation enthusiast</p>
+        <p class="fade-in">I’m a graphic designer transitioning into UX design with a strong foundation in client-focused design and recent training in UX through Google Coursera. Over the past five years, I’ve been freelancing - working with illustration, artworks, logo design, branding, NFT projects, media, print etc.</p>
+        <p class="fade-in">I developed a passion for UX because it allows me to create experiences that are not just visually compelling but also interactive and engaging. UX design allows me to craft solutions that people don’t simply look at—they actively engage with them.</p>
       </div>
       <div class="intro-image">
-        <img src="delta-profile.jpg" alt="A photo of Delta, a UX designer with a friendly smile." class="grow">
+        <img src="Images/About Me/delta-profile.jpg" alt="A photo of Delta, a UX designer with a friendly smile." class="grow">
+        <div class="image-hover-text">Hey! It's me, Delta</div>
       </div>
     </section>
 
     <!-- Personal Touch Section -->
     <section id="personal-touch">
       <div class="personal-image">
-        <img src="delta-totoro.jpg" alt="Delta with a Totoro illustration." class="grow">
-        <img src="jewellery1.jpg" alt="Delta's handmade jewelry." class="overlap grow">
+        <img src="Images/About Me/delta-totoro.jpg" alt="Delta with a Totoro illustration." class="grow">
+        <img src="Images/About Me/jewellery1.jpg" alt="Delta's handmade jewelry." class="overlap grow">
+        <div class="image-hover-text">Hey! It's me, Delta</div>
       </div>
       <div class="personal-text">
-        <p class="fade-in">When I’m not designing, I’m usually creating or exploring. Traveling, making music, learning Swedish, trying my hand at jewelry-making—you name it. I’ve got a curious soul and a love for turning ideas into reality.</p>
-        <p class="fade-in">Want to know more? If you’re curious about my journey—like how I went from avoiding drawing as a kid to falling in love with UX design—check out my full story [here].</p>
-        <p class="fade-in">Let’s create something awesome together. Or just geek out about design, music, or pole fitness (yes, really).</p>
+        <p class="fade-in">When I’m not designing, I’m usually creating or exploring. Whether it’s travelling, playing piano and guitar, learning a new language (at the moment it’s Swedish), jewellery-making, or embroidery, I’m always seeking new experiences, looking for opportunities to grow and embracing my creative side. I’ve got a curious soul and a love for turning ideas into reality.</p>
       </div>
+    </section>
+
+    <!-- Additional Paragraph -->
+    <section id="additional-paragraph">
+      <p class="fade-in" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 0 2rem;">What began as a creative experiment has now become a cornerstone of my design philosophy. I believe in the power of thoughtful, user-centered design to create meaningful connections and solve real-world problems.</p>
     </section>
   </main>
 
