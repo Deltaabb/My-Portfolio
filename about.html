@@ -7,7 +7,7 @@
   <style>
     /* General Styles */
     :root {
-      --light-bg: #f5f5dc; /* Warm beige background */
+      --light-bg: #faf8f0; /* Warm beige with yellow/orange tone */
       --dark-bg: #333;
       --neutral-color: #333;
       --transition-speed: 0.3s;
@@ -162,7 +162,7 @@
     }
 
     .intro-image img, .personal-image img {
-      max-width: 100%;
+      width: 50%; /* Reduced image size */
       border-radius: 10px;
       transition: transform 0.3s, box-shadow 0.3s;
       cursor: pointer;
@@ -170,15 +170,15 @@
 
     .personal-image .overlap {
       position: absolute;
-      bottom: -20px;
-      right: -20px;
+      bottom: -80px; /* Adjusted overlap to 80px */
+      right: -80px; /* Adjusted overlap to 80px */
       width: 60%;
       box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     /* Image Hover Text */
     .image-hover-text {
-      position: absolute;
+      position: fixed;
       background: rgba(255, 255, 255, 0.9);
       padding: 0.5rem 1rem;
       border-radius: 5px;
@@ -187,11 +187,6 @@
       display: none;
       pointer-events: none;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .intro-image:hover .image-hover-text,
-    .personal-image:hover .image-hover-text {
-      display: block;
     }
 
     /* Animations */
@@ -289,7 +284,6 @@
       </div>
       <div class="intro-image">
         <img src="Images/About Me/delta-profile.jpg" alt="A photo of Delta, a UX designer with a friendly smile." class="grow">
-        <div class="image-hover-text">Hey! It's me, Delta</div>
       </div>
     </section>
 
@@ -298,18 +292,15 @@
       <div class="personal-image">
         <img src="Images/About Me/delta-totoro.jpg" alt="Delta with a Totoro illustration." class="grow">
         <img src="Images/About Me/jewellery1.jpg" alt="Delta's handmade jewelry." class="overlap grow">
-        <div class="image-hover-text">Hey! It's me, Delta</div>
       </div>
       <div class="personal-text">
         <p class="fade-in">When I’m not designing, I’m usually creating or exploring. Whether it’s travelling, playing piano and guitar, learning a new language (at the moment it’s Swedish), jewellery-making, or embroidery, I’m always seeking new experiences, looking for opportunities to grow and embracing my creative side. I’ve got a curious soul and a love for turning ideas into reality.</p>
       </div>
     </section>
-
-    <!-- Additional Paragraph -->
-    <section id="additional-paragraph">
-      <p class="fade-in" style="width: 100%; max-width: 800px; margin: 0 auto; padding: 0 2rem;">What began as a creative experiment has now become a cornerstone of my design philosophy. I believe in the power of thoughtful, user-centered design to create meaningful connections and solve real-world problems.</p>
-    </section>
   </main>
+
+  <!-- Hover Text Box -->
+  <div class="image-hover-text">Hey! It's me, Delta</div>
 
   <script>
     // Light/Dark Mode Toggle
@@ -327,6 +318,22 @@
       document.body.classList.add('dark-mode');
       document.querySelector('.mode-toggle').textContent = 'Light Mode';
     }
+
+    // Hover Text Follows Cursor
+    const hoverText = document.querySelector('.image-hover-text');
+    const images = document.querySelectorAll('.intro-image img, .personal-image img');
+
+    images.forEach((image) => {
+      image.addEventListener('mousemove', (e) => {
+        hoverText.style.display = 'block';
+        hoverText.style.left = `${e.pageX + 10}px`;
+        hoverText.style.top = `${e.pageY + 10}px`;
+      });
+
+      image.addEventListener('mouseleave', () => {
+        hoverText.style.display = 'none';
+      });
+    });
   </script>
 </body>
 </html>
