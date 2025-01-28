@@ -3,33 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neon Line Art Collection</title>
+  <title>My Work - Delta</title>
   <style>
     /* General Styles */
     :root {
-      --dark-bg: linear-gradient(135deg, #1c003f, #230036, #350033);
-      --neutral-color: #ffffff;
+      --light-bg: #faf8f0; /* Warm beige with yellow/orange tone */
+      --dark-bg: #333;
+      --neutral-color: #333;
       --transition-speed: 0.3s;
-      --footer-bg: #120028;
     }
 
     body {
+      font-family: 'Arial', sans-serif;
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: var(--dark-bg);
+      padding: 0;
+      background: var(--light-bg);
       color: var(--neutral-color);
       transition: background var(--transition-speed), color var(--transition-speed);
     }
 
-    /* Navigation Bar */
+    body.dark-mode {
+      background: var(--dark-bg);
+      color: #f9f9f9;
+    }
+
+    body.dark-mode .tagline {
+      color: #ccc;
+    }
+
+    /* Header and Navigation */
     header {
       position: sticky;
       top: 0;
-      background-color: rgba(26, 26, 26, 0.6); /* Increased transparency */
-      backdrop-filter: blur(10px);
+      background-color: var(--light-bg);
       padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode header {
+      background-color: var(--dark-bg);
     }
 
     nav {
@@ -46,130 +60,136 @@
       gap: 2rem;
     }
 
+    nav ul li {
+      position: relative;
+    }
+
     nav ul li a {
       text-decoration: none;
-      font-weight: bold;
       color: var(--neutral-color);
+      font-weight: bold;
       padding-bottom: 5px;
       transition: color var(--transition-speed);
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background-color: var(--neutral-color);
+      transition: width var(--transition-speed), transform var(--transition-speed);
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+      transform: translateY(5px);
+    }
+
+    nav ul li a.current-page {
+      color: var(--neutral-color);
+    }
+
+    body.dark-mode nav ul li a.current-page {
+      color: #999;
     }
 
     .logo {
       font-family: 'Poppins', sans-serif;
       font-size: 1.2rem;
       font-weight: bold;
+      padding-left: 1rem;
+    }
+
+    .mode-toggle {
+      background: transparent;
+      border: 2px solid var(--neutral-color);
       color: var(--neutral-color);
-      transition: color var(--transition-speed);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
     }
 
-    /* Page Title and Description */
-    .page-header {
-      text-align: center;
-      margin: 2rem 0;
+    body.dark-mode .mode-toggle {
+      border-color: #999;
+      color: #999;
     }
 
-    .page-header h1 {
+    .mode-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    main {
+      padding: 2rem 4rem;
+    }
+
+    h1 {
       font-size: 2.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .page-header p {
+    .tagline {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    p {
       font-size: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
       line-height: 1.6;
+      margin-bottom: 2rem;
     }
 
-    /* Masonry Grid Layout */
-    .masonry-grid {
+    /* Work Grid */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .work-box {
       display: flex;
-      gap: 24px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .masonry-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    /* Column Padding Adjustments */
-    .masonry-column:nth-child(1) {
-      padding-top: 160px;
-    }
-
-    .masonry-column:nth-child(3) {
-      padding-top: 80px;
-    }
-
-    .masonry-column img {
-      width: 100%;
-      height: auto;
+      align-items: center;
+      background: #fff;
+      padding: 1rem;
       border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
       cursor: pointer;
     }
 
-    .masonry-column img:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    .work-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* Parallax Animation */
-    .masonry-column {
-      position: relative;
+    .work-box img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      margin-right: 1rem;
     }
 
-    .masonry-column:nth-child(1) {
-      animation: parallax1 15s linear infinite;
+    .work-box h2 {
+      font-size: 1.2rem;
+      margin: 0;
     }
 
-    .masonry-column:nth-child(2) {
-      animation: parallax2 15s linear infinite;
+    .work-box p {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0;
     }
 
-    .masonry-column:nth-child(3) {
-      animation: parallax3 15s linear infinite;
-    }
-
-    @keyframes parallax1 {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0); }
-    }
-
-    @keyframes parallax2 {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-40px); }
-      100% { transform: translateY(0); }
-    }
-
-    @keyframes parallax3 {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-60px); }
-      100% { transform: translateY(0); }
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: var(--footer-bg);
-      margin-top: 40px;
-    }
-
-    footer a {
-      color: var(--neutral-color);
-      text-decoration: none;
-      margin: 0 10px;
-      transition: color var(--transition-speed);
-    }
-
-    footer a:hover {
-      text-decoration: underline;
+    /* Responsiveness */
+    @media (max-width: 768px) {
+      .work-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -184,46 +204,64 @@
         <li><a href="mywork.html" class="current-page">My Work</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+      <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
     </nav>
   </header>
 
-  <!-- Page Title and Description -->
-  <div class="page-header">
-    <h1>Neon Line Art Collection</h1>
-    <p>What began as a creative experiment quickly turned into an accidental series of artworks for podcasters and Spotify artists. Initially, I was just exploring a new style, but when someone came across my work and requested a similar piece for their project, things started to take off. From there, the collection grew as word spread and more clients were drawn to the bold, unique aesthetic. Collaborating with each client, I crafted customized designs that reflected their music or podcast themes while staying true to the style that caught their attention in the first place. It’s been an exciting journey to see how this experiment turned into a cohesive, sought-after collection.</p>
-  </div>
-
   <!-- Main Content -->
   <main>
-    <div class="masonry-grid">
-      <div class="masonry-column">
-        <img src="Images/My Work/5yearslater.jpg" alt="5 Years Later Project">
-        <img src="Images/My Work/gaia.png" alt="Gaia Project">
-        <img src="Images/My Work/mungdart.png" alt="Mung Dart Project">
-        <img src="Images/My Work/thenetisvast.jpg" alt="The Net is Vast Project">
-        <img src="Images/My Work/wantit.png" alt="Want It Project">
+    <h1>My Work</h1>
+    <p>Welcome to my designs, click one of the boxes below to check out my work.</p>
+
+    <!-- Work Grid -->
+    <div class="work-grid">
+      <div class="work-box">
+        <img src="Images/My Work/ux-projects.jpg" alt="UX Projects">
+        <div>
+          <h2>UX Projects</h2>
+          <p>See my projects here</p>
+        </div>
       </div>
-      <div class="masonry-column">
-        <img src="Images/My Work/electricity.png" alt="Electricity Project">
-        <img src="Images/My Work/lostinspace.jpg" alt="Lost in Space Project">
-        <img src="Images/My Work/neverletyoufall.jpg" alt="Never Let You Fall Project">
-        <img src="Images/My Work/tubopus.png" alt="Tubopus Project">
-        <img src="Images/My Work/backtoyou.png" alt="Back to You Project">
+      <div class="work-box" onclick="window.location.href='neonlineartcollection.html'">
+        <img src="Images/My Work/neon-line-art.jpg" alt="Neon Line Art Collection">
+        <div>
+          <h2>Neon Line Art Collection</h2>
+          <p>See my artwork</p>
+        </div>
       </div>
-      <div class="masonry-column">
-        <img src="Images/My Work/fluorescence.png" alt="Fluorescence Project">
-        <img src="Images/My Work/freak3000.jpg" alt="Freak 3000 Project">
-        <img src="Images/My Work/sulphur.png" alt="Sulphur Project">
-        <img src="Images/My Work/tonight.jpg" alt="Tonight Project">
-        <img src="Images/My Work/voyager1.png" alt="Voyager 1 Project">
+      <div class="work-box">
+        <img src="Images/My Work/logos.jpg" alt="Logos">
+        <div>
+          <h2>Logos</h2>
+          <p>Blah blah</p>
+        </div>
+      </div>
+      <div class="work-box">
+        <img src="Images/My Work/other.jpg" alt="Other Designs">
+        <div>
+          <h2>Other</h2>
+          <p>Check out other stuff I've designed</p>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer>
-    <a href="index.html">Home</a>
-    <a href="about.html">About Me</a>
-    <a href="contact.html">Contact</a>
-    <p>&copy; 2023 Delta. All rights reserved.</p>
- 
+  <script>
+    // Light/Dark Mode Toggle
+    function toggleMode() {
+      const body = document.body;
+      const modeToggle = document.querySelector('.mode-toggle');
+      body.classList.toggle('dark-mode');
+      modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      localStorage.setItem('dark-mode', body.classList.contains('dark-mode'));
+    }
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('dark-mode') === 'true';
+    if (savedDarkMode) {
+      document.body.classList.add('dark-mode');
+      document.querySelector('.mode-toggle').textContent = 'Light Mode';
+    }
+  </script>
+</body>
+</html>
