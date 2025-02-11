@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mia's Patisserie</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Embedded CSS -->
+  <style>
+    /* General Styles */
+    :root {
+      --primary-cta: #FF4F5A;
+      --light-bg: #F7F7F7;
+      --dark-bg: #121212;
+      --light-text: #212121;
+      --dark-text: #FAFAFA;
+      --transition-speed: 0.3s;
+      --pastel-warm-light: #FFE5B4; /* Light mode pastel warm color */
+      --pastel-warm-dark: #D2B48C; /* Dark mode pastel warm color */
+      --neutral-color: #666; /* Neutral color for button outline */
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-bg);
+      color: var(--light-text);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    h1, h2, h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700; /* Poppins Bold for headings */
+    }
+
+    p {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400; /* Poppins Regular for subheadings */
+    }
+
+    a {
+      color: var(--light-text);
+      text-decoration: none;
+    }
+
+    body.dark-mode a {
+      color: var(--dark-text);
+    }
+
+    /* Header and Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      background-color: transparent; /* Transparent background initially */
+      padding: 1rem 2rem;
+      z-index: 1000;
+      transition: background-color var(--transition-speed), backdrop-filter var(--transition-speed);
+    }
+
+    header.scrolled {
+      background-color: rgba(255, 255, 255, 0); /* Fully transparent on scroll */
+      backdrop-filter: blur(10px); /* Blur effect */
+    }
+
+    body.dark-mode header.scrolled {
+      background-color: rgba(18, 18, 18, 0); /* Fully transparent on scroll */
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      font-weight: bold;
+      padding-bottom: 5px;
+    }
+
+    /* Different underline colors for each link */
+    nav ul li:nth-child(1) a::after {
+      background-color: #F6919E; /* Home */
+    }
+    nav ul li:nth-child(2) a::after {
+      background-color: #A08AE1; /* About Me */
+    }
+    nav ul li:nth-child(3) a::after {
+      background-color: #7EC4DA; /* My Work */
+    }
+    nav ul li:nth-child(4) a::after {
+      background-color: #83CF80; /* Contact */
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      transition: width var(--transition-speed), transform var(--transition-speed);
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+      transform: translateY(5px);
+    }
+
+    /* Current page indicator */
+    nav ul li a.current-page {
+      color: var(--neutral-color); /* Subtle neutral color for current page */
+    }
+
+    body.dark-mode nav ul li a.current-page {
+      color: #999; /* Lighter shade for dark mode */
+    }
+
+    .logo {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2rem; /* Smaller logo size */
+      font-weight: bold; /* Bold font */
+      padding-left: 1rem;
+      cursor: pointer; /* Make logo clickable */
+    }
+
+    /* Mode Toggle Button */
+    .mode-toggle {
+      background: transparent;
+      border: 2px solid var(--neutral-color);
+      color: var(--neutral-color);
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode .mode-toggle {
+      border-color: #999;
+      color: #999;
+    }
+
+    .mode-toggle:hover {
+      transform: scale(1.05); /* Subtle size change on hover */
+    }
+
+    /* Title Section */
+    .title-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80px;
+      background-color: #FAE4DF;
+    }
+
+    .title-section h1 {
+      font-family: 'Lexend', sans-serif;
+      font-size: 40px;
+      font-weight: 600; /* Lexend SemiBold */
+      color: #000000; /* Black text */
+      margin: 0;
+    }
+
+    /* Image Section */
+    .image-section {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .image-section img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <nav>
+      <div class="logo" onclick="window.location.href='#'">DA</div>
+      <ul>
+        <li><a href="#home" class="current-page">Home</a></li>
+        <li><a href="#about">About Me</a></li>
+        <li><a href="#work">My Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
+    </nav>
+  </header>
+
+  <!-- Title Section -->
+  <section class="title-section">
+    <h1>Project 1</h1>
+  </section>
+
+  <!-- Image Section -->
+  <section class="image-section">
+    <img src="Images/Project 1/MiasPatisserie.png" alt="Mia's Patisserie">
+  </section>
+
+  <!-- Embedded JavaScript -->
+  <script>
+    // Toggle Light/Dark Mode
+    function toggleMode() {
+      const body = document.body;
+      const modeToggle = document.querySelector('.mode-toggle');
+      body.classList.toggle('dark-mode');
+      modeToggle.textContent = body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    // Highlight current page in navigation
+    const currentPage = window.location.hash || "#home"; // Default to Home
+    const navLinks = document.querySelectorAll('nav ul li a');
+    navLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPage) {
+        link.classList.add('current-page');
+      }
+    });
+
+    // Add scroll effect to header
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>
