@@ -367,12 +367,12 @@
   <!-- Header -->
   <header>
     <nav>
-      <div class="logo" onclick="window.location.href='#'">DA</div>
+      <div class="logo" onclick="window.location.href='index.html'">DA</div>
       <ul>
-        <li><a href="#home" class="current-page">Home</a></li>
-        <li><a href="#about">About Me</a></li>
-        <li><a href="#work">My Work</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="index.html" class="current-page">Home</a></li>
+        <li><a href="about.html">About Me</a></li>
+        <li><a href="mywork.html">My Work</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
       <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
     </nav>
@@ -429,7 +429,7 @@
     }
 
     // Highlight current page in navigation
-    const currentPage = window.location.hash || "#home"; // Default to Home
+    const currentPage = window.location.pathname.split('/').pop() || "index.html"; // Default to Home
     const navLinks = document.querySelectorAll('nav ul li a');
     navLinks.forEach(link => {
       if (link.getAttribute('href') === currentPage) {
