@@ -62,15 +62,19 @@
     header {
       position: sticky;
       top: 0;
-      background-color: var(--light-bg);
+      background-color: transparent; /* Transparent background initially */
       padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       z-index: 1000;
-      transition: background-color var(--transition-speed);
+      transition: background-color var(--transition-speed), backdrop-filter var(--transition-speed);
     }
 
-    body.dark-mode header {
-      background-color: var(--dark-bg);
+    header.scrolled {
+      background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+      backdrop-filter: blur(10px); /* Blur effect */
+    }
+
+    body.dark-mode header.scrolled {
+      background-color: rgba(18, 18, 18, 0.6); /* Semi-transparent dark background */
     }
 
     nav {
@@ -139,6 +143,7 @@
       font-size: 1.2rem; /* Smaller logo size */
       font-weight: bold; /* Bold font */
       padding-left: 1rem;
+      cursor: pointer; /* Make logo clickable */
     }
 
     /* Mode Toggle Button */
@@ -288,10 +293,6 @@
       margin: 1rem 0;
     }
 
-    footer .social-links a {
-      margin: 0 0.5rem;
-    }
-
     /* Animations */
     @keyframes fadeIn {
       from {
@@ -370,7 +371,7 @@
   <!-- Header -->
   <header>
     <nav>
-      <div class="logo">DA</div>
+      <div class="logo" onclick="window.location.href='#'">DA</div>
       <ul>
         <li><a href="#home" class="current-page">Home</a></li>
         <li><a href="#about">About Me</a></li>
@@ -380,7 +381,7 @@
         <li><a href="mywork.html">My Work</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
-      <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
+      <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
     </nav>
   </header>
 
@@ -397,21 +398,21 @@
   <!-- Projects Section -->
   <section id="work" class="projects">
     <div class="project-card">
-      <img src="mias1.png" alt="Mia’s Patisserie">
+      <img src="Images/Homepage/mias1.png" alt="Mia’s Patisserie">
       <div>
         <h3>Mia’s Patisserie</h3>
         <p>Ever found yourself at a restaurant with a big group, awkwardly passing a phone around so everyone can choose their order? Mia’s Patisserie is a mobile food menu and ordering app designed to make group ordering simple, fun, and seamless.</p>
       </div>
     </div>
     <div class="project-card">
-      <img src="website1.png" alt="Portfolio Website">
+      <img src="Images/Homepage/website1.png" alt="Portfolio Website">
       <div>
         <h3>Portfolio Website</h3>
         <p>Curious about the thought process behind this website? Explore its features firsthand and discover the ideas that brought it to life.</p>
       </div>
     </div>
     <div class="project-card">
-      <img src="sulphur1.png" alt="Neon Line Art Collection">
+      <img src="Images/Homepage/sulphur.png" alt="Neon Line Art Collection">
       <div>
         <h3>Neon Line Art Collection</h3>
         <p>What began as a fun experiment turned into a series of bold, custom illustrations brought to life in glowing neon lines.</p>
@@ -421,11 +422,6 @@
 
   <!-- Footer -->
   <footer>
-    <div class="social-links">
-      <a href="#">LinkedIn</a>
-      <a href="#">Behance</a>
-      <a href="#">Dribbble</a>
-    </div>
     <p>© 2023 Delta. All rights reserved.</p>
   </footer>
 
@@ -436,7 +432,7 @@
       const body = document.body;
       const modeToggle = document.querySelector('.mode-toggle');
       body.classList.toggle('dark-mode');
-      modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+      modeToggle.textContent = body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
     }
 
     // Highlight current page in navigation
@@ -445,6 +441,16 @@
     navLinks.forEach(link => {
       if (link.getAttribute('href') === currentPage) {
         link.classList.add('current-page');
+      }
+    });
+
+    // Add scroll effect to header
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
       }
     });
   </script>
