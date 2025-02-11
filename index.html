@@ -18,10 +18,6 @@
       --transition-speed: 0.3s;
       --pastel-warm-light: #FFE5B4; /* Light mode pastel warm color */
       --pastel-warm-dark: #D2B48C; /* Dark mode pastel warm color */
-      --pastel-red: #FF6F61; /* Pastel red for Home */
-      --pastel-yellow: #FFD700; /* Pastel yellow for About Me */
-      --pastel-green: #77DD77; /* Pastel green for My Work */
-      --pastel-blue: #77EEF2; /* Pastel blue for Contact */
       --neutral-color: #666; /* Neutral color for button outline */
     }
 
@@ -69,12 +65,12 @@
     }
 
     header.scrolled {
-      background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+      background-color: rgba(255, 255, 255, 0); /* Fully transparent on scroll */
       backdrop-filter: blur(10px); /* Blur effect */
     }
 
     body.dark-mode header.scrolled {
-      background-color: rgba(18, 18, 18, 0.6); /* Semi-transparent dark background */
+      background-color: rgba(18, 18, 18, 0); /* Fully transparent on scroll */
     }
 
     nav {
@@ -102,16 +98,16 @@
 
     /* Different underline colors for each link */
     nav ul li:nth-child(1) a::after {
-      background-color: var(--pastel-red); /* Home */
+      background-color: #F6919E; /* Home */
     }
     nav ul li:nth-child(2) a::after {
-      background-color: var(--pastel-yellow); /* About Me */
+      background-color: #A08AE1; /* About Me */
     }
     nav ul li:nth-child(3) a::after {
-      background-color: var(--pastel-green); /* My Work */
+      background-color: #7EC4DA; /* My Work */
     }
     nav ul li:nth-child(4) a::after {
-      background-color: var(--pastel-blue); /* Contact */
+      background-color: #83CF80; /* Contact */
     }
 
     nav ul li a::after {
@@ -163,7 +159,7 @@
     }
 
     .mode-toggle:hover {
-      transform: scale(1.1); /* Subtle size change on hover */
+      transform: scale(1.05); /* Subtle size change on hover */
     }
 
     /* Hero Section */
@@ -377,9 +373,6 @@
         <li><a href="#about">About Me</a></li>
         <li><a href="#work">My Work</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="about.html">About Me</a></li>
-        <li><a href="mywork.html">My Work</a></li>
-        <li><a href="contact.html">Contact</a></li>
       </ul>
       <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
     </nav>
