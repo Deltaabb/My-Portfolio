@@ -1,451 +1,342 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delta's UX/UI Portfolio</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Embedded CSS -->
+  <title>Swedish Vocabulary Matching Game</title>
   <style>
-    /* General Styles */
-    :root {
-      --primary-cta: #FF4F5A;
-      --light-bg: #F7F7F7;
-      --dark-bg: #121212;
-      --light-text: #212121;
-      --dark-text: #FAFAFA;
-      --transition-speed: 0.3s;
-      --pastel-warm-light: #FFE5B4; /* Light mode pastel warm color */
-      --pastel-warm-dark: #D2B48C; /* Dark mode pastel warm color */
-      --neutral-color: #666; /* Neutral color for button outline */
-    }
-
     body {
-      font-family: 'Lato', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--light-bg);
-      color: var(--light-text);
-      transition: background-color var(--transition-speed), color var(--transition-speed);
+      font-family: sans-serif;
+      margin: 20px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-
-    body.dark-mode {
-      background-color: var(--dark-bg);
-      color: var(--dark-text);
+    .hidden { display: none; }
+    #vocabInput {
+      width: 100%;
+      height: 200px;
+      font-size: 16px;
+      padding: 8px;
+      box-sizing: border-box;
     }
-
-    h1, h2, h3 {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700; /* Poppins Bold for headings */
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
     }
-
-    p {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 400; /* Poppins Regular for subheadings */
+    button:disabled {
+      opacity: 0.5;
     }
-
-    a {
-      color: var(--light-text);
-      text-decoration: none;
-    }
-
-    body.dark-mode a {
-      color: var(--dark-text);
-    }
-
-    /* Header and Navigation */
-    header {
-      position: sticky;
-      top: 0;
-      background-color: transparent; /* Transparent background initially */
-      padding: 1rem 2rem;
-      z-index: 1000;
-      transition: background-color var(--transition-speed), backdrop-filter var(--transition-speed);
-    }
-
-    header.scrolled {
-      background-color: rgba(255, 255, 255, 0); /* Fully transparent on scroll */
-      backdrop-filter: blur(10px); /* Blur effect */
-    }
-
-    body.dark-mode header.scrolled {
-      background-color: rgba(18, 18, 18, 0); /* Fully transparent on scroll */
-    }
-
-    nav {
+    #gameBoard {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      margin-top: 20px;
     }
-
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 2rem;
+    .column {
+      width: 45%;
     }
-
-    nav ul li {
-      position: relative;
-    }
-
-    nav ul li a {
-      font-weight: bold;
-      padding-bottom: 5px;
-    }
-
-    /* Different underline colors for each link */
-    nav ul li:nth-child(1) a::after {
-      background-color: #F6919E; /* Home */
-    }
-    nav ul li:nth-child(2) a::after {
-      background-color: #A08AE1; /* About Me */
-    }
-    nav ul li:nth-child(3) a::after {
-      background-color: #7EC4DA; /* My Work */
-    }
-    nav ul li:nth-child(4) a::after {
-      background-color: #83CF80; /* Contact */
-    }
-
-    nav ul li a::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 3px;
-      transition: width var(--transition-speed), transform var(--transition-speed);
-    }
-
-    nav ul li a:hover::after {
-      width: 100%;
-      transform: translateY(5px);
-    }
-
-    /* Current page indicator */
-    nav ul li a.current-page {
-      color: var(--neutral-color); /* Subtle neutral color for current page */
-    }
-
-    body.dark-mode nav ul li a.current-page {
-      color: #999; /* Lighter shade for dark mode */
-    }
-
-    .logo {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.2rem; /* Smaller logo size */
-      font-weight: bold; /* Bold font */
-      padding-left: 1rem;
-      cursor: pointer; /* Make logo clickable */
-    }
-
-    /* Mode Toggle Button */
-    .mode-toggle {
-      background: transparent;
-      border: 2px solid var(--neutral-color);
-      color: var(--neutral-color);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode .mode-toggle {
-      border-color: #999;
-      color: #999;
-    }
-
-    .mode-toggle:hover {
-      transform: scale(1.05); /* Subtle size change on hover */
-    }
-
-    /* Hero Section */
-    .hero {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 5rem 6rem; /* Increased left padding */
-      background-color: var(--pastel-warm-light);
-      color: var(--light-text);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .hero {
-      background-color: var(--pastel-warm-dark);
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      max-width: 66.66%; /* Text wraps at one-third of the page's width */
-      line-height: 1.2; /* Reduced line height */
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      max-width: 600px;
-      margin-bottom: 2rem; /* Added margin for spacing */
-    }
-
-    /* Call to Action (CTA) */
-    .cta {
-      display: flex;
-      align-items: center;
-      font-size: 1.25rem;
-      font-weight: bold;
-      color: var(--primary-cta);
-      cursor: pointer;
-      animation: bounce 2s infinite;
-    }
-
-    .cta .arrow {
-      margin-left: 0.5rem;
-      font-size: 1.5rem;
-      transform: rotate(90deg);
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-10px);
-      }
-      60% {
-        transform: translateY(-5px);
-      }
-    }
-
-    /* Projects Section */
-    .projects {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      padding: 2rem;
-      background-color: var(--light-bg);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .projects {
-      background-color: var(--dark-bg);
-    }
-
-    .project-card {
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-      width: 80%;
-      max-width: 800px;
-    }
-
-    body.dark-mode .project-card {
-      background: #1E1E1E;
-    }
-
-    .project-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .project-card img {
-      max-height: 200px; /* Maximum height for images */
-      width: auto; /* Maintain aspect ratio */
-      margin-right: 2rem;
-    }
-
-    .project-card h3 {
-      padding: 1rem;
-      margin: 0;
-    }
-
-    .project-card p {
-      padding: 0 1rem 1rem;
-      margin: 0;
-    }
-
-    /* Footer */
-    footer {
+    .card {
+      background: #f0f0f0;
+      padding: 10px;
+      margin: 5px;
       text-align: center;
-      padding: 2rem;
-      background-color: var(--pastel-warm-light);
-      color: var(--light-text);
-      transition: background-color var(--transition-speed);
+      border: 1px solid #ccc;
+      cursor: pointer;
+      user-select: none;
     }
-
-    body.dark-mode footer {
-      background-color: var(--pastel-warm-dark);
+    .selected {
+      background: yellow;
     }
-
-    footer .social-links {
-      margin: 1rem 0;
+    .matched {
+      background: lightgreen;
     }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #timer {
+      font-size: 24px;
+      text-align: center;
+      margin-top: 10px;
     }
-
-    .hero, .projects, footer {
-      animation: fadeIn 1s ease-out;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      nav ul {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        background: var(--light-bg);
-      }
-
-      body.dark-mode nav ul {
-        background: var(--dark-bg);
-      }
-
-      nav ul.active {
-        display: flex;
-      }
-
-      .hamburger {
-        display: block;
-      }
-
-      .hamburger.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-      }
-
-      .hamburger.active span:nth-child(2) {
-        opacity: 0;
-      }
-
-      .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(5px, -5px);
-      }
-
-      .project-card {
-        flex-direction: column;
-        width: 90%;
-      }
-
-      .project-card img {
-        width: 100%;
-        height: auto;
-        margin-right: 0;
-        margin-bottom: 1rem;
-      }
-
-      .hero {
-        padding: 5rem 2rem; /* Adjusted padding for smaller screens */
-      }
-
-      .hero h1 {
-        max-width: 100%; /* Full width on smaller screens */
-      }
+    #resultsSection {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <nav>
-      <div class="logo" onclick="window.location.href='index.html'">DA</div>
-      <ul>
-        <li><a href="index.html" class="current-page">Home</a></li>
-        <li><a href="about.html">About Me</a></li>
-        <li><a href="mywork.html">My Work</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
-    </nav>
-  </header>
+  <h1>Swedish Vocabulary Matching Game</h1>
 
-  <!-- Hero Section -->
-  <section id="home" class="hero">
-    <h1>Designs that look great, feel natural, and actually work. No fluff, just good design.</h1>
-    <p>Hi, I’m Delta, and I make user experiences that don’t suck.</p>
-    <div class="cta">
-      <span>Check out my work!</span>
-      <span class="arrow">➤</span>
-    </div>
-  </section>
+  <!-- Input Section -->
+  <div id="inputSection">
+    <h2>Enter Your Vocabulary</h2>
+    <p>
+      Paste your vocabulary data below. Use a tab or comma to separate the English and Swedish words (one pair per line).<br>
+      <em>Example:</em><br>
+      computer [tab] dator<br>
+      dog [tab] hund<br>
+      table [tab] bord
+    </p>
+    <textarea id="vocabInput" placeholder="computer [tab] dator&#10;dog [tab] hund&#10;table [tab] bord"></textarea>
+    <br>
+    <button id="startButton" disabled>Start Game</button>
+  </div>
 
-  <!-- Projects Section -->
-  <section id="work" class="projects">
-    <div class="project-card">
-      <img src="Images/Homepage/mias1.png" alt="Mia’s Patisserie">
-      <div>
-        <h3>Mia’s Patisserie</h3>
-        <p>Ever found yourself at a restaurant with a big group, awkwardly passing a phone around so everyone can choose their order? Mia’s Patisserie is a mobile food menu and ordering app designed to make group ordering simple, fun, and seamless.</p>
+  <!-- Game Section -->
+  <div id="gameSection" class="hidden">
+    <div id="timer">02:00</div>
+    <div id="gameBoard">
+      <div id="englishColumn" class="column">
+        <h3>English</h3>
+        <div id="englishCards"></div>
+      </div>
+      <div id="swedishColumn" class="column">
+        <h3>Swedish</h3>
+        <div id="swedishCards"></div>
       </div>
     </div>
-    <div class="project-card">
-      <img src="Images/Homepage/website1.png" alt="Portfolio Website">
-      <div>
-        <h3>Portfolio Website</h3>
-        <p>Curious about the thought process behind this website? Explore its features firsthand and discover the ideas that brought it to life.</p>
-      </div>
-    </div>
-    <div class="project-card">
-      <img src="Images/Homepage/sulphur.png" alt="Neon Line Art Collection">
-      <div>
-        <h3>Neon Line Art Collection</h3>
-        <p>What began as a fun experiment turned into a series of bold, custom illustrations brought to life in glowing neon lines.</p>
-      </div>
-    </div>
-  </section>
+  </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2023 Delta. All rights reserved.</p>
-  </footer>
+  <!-- Results Section -->
+  <div id="resultsSection" class="hidden">
+    <h2>Results</h2>
+    <p id="scoreDisplay"></p>
+    <div id="mismatchReport"></div>
+  </div>
 
-  <!-- Embedded JavaScript -->
   <script>
-    // Toggle Light/Dark Mode
-    function toggleMode() {
-      const body = document.body;
-      const modeToggle = document.querySelector('.mode-toggle');
-      body.classList.toggle('dark-mode');
-      modeToggle.textContent = body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+    // Utility function to shuffle an array
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
 
-    // Highlight current page in navigation
-    const currentPage = window.location.pathname.split('/').pop() || "index.html"; // Default to Home
-    const navLinks = document.querySelectorAll('nav ul li a');
-    navLinks.forEach(link => {
-      if (link.getAttribute('href') === currentPage) {
-        link.classList.add('current-page');
-      }
+    // Global variables to hold our game state
+    let vocabularyPairs = [];
+    let remainingPairs = [];
+    let currentPairs = [];
+    let matchedPairsCount = 0;
+    let selectedCard = null;
+    let timerInterval;
+    let timeLeft = 120; // 2 minutes in seconds
+    let mismatchCounts = {}; // { pairId: count }
+
+    // DOM Elements
+    const vocabInput = document.getElementById('vocabInput');
+    const startButton = document.getElementById('startButton');
+    const inputSection = document.getElementById('inputSection');
+    const gameSection = document.getElementById('gameSection');
+    const englishCardsDiv = document.getElementById('englishCards');
+    const swedishCardsDiv = document.getElementById('swedishCards');
+    const timerDisplay = document.getElementById('timer');
+    const resultsSection = document.getElementById('resultsSection');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const mismatchReport = document.getElementById('mismatchReport');
+
+    // Enable the Start Game button when there's input
+    vocabInput.addEventListener('input', function() {
+      const text = vocabInput.value.trim();
+      startButton.disabled = text.length === 0;
     });
 
-    // Add scroll effect to header
-    window.addEventListener('scroll', () => {
-      const header = document.querySelector('header');
-      if (window.scrollY > 0) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
+    // When the Start Game button is clicked...
+    startButton.addEventListener('click', function() {
+      parseVocabulary();
+      if (vocabularyPairs.length === 0) {
+        alert("No valid vocabulary pairs found. Please check your input.");
+        return;
       }
+      // Reset game state
+      remainingPairs = vocabularyPairs.slice();
+      currentPairs = [];
+      matchedPairsCount = 0;
+      mismatchCounts = {};
+      selectedCard = null;
+      timeLeft = 120;
+      
+      // Hide input, show game
+      inputSection.classList.add('hidden');
+      gameSection.classList.remove('hidden');
+      resultsSection.classList.add('hidden');
+      
+      // Initialize board with up to 6 pairs
+      loadNewPairs();
+      renderGameBoard();
+      startTimer();
     });
+
+    // Parse the vocabulary from the textarea
+    function parseVocabulary() {
+      vocabularyPairs = [];
+      const lines = vocabInput.value.trim().split('\n');
+      let id = 0;
+      lines.forEach(line => {
+        // Split by tab or comma
+        let parts = line.split(/\t|,/);
+        if (parts.length >= 2) {
+          const english = parts[0].trim();
+          const swedish = parts[1].trim();
+          if (english && swedish) {
+            vocabularyPairs.push({id: id, english: english, swedish: swedish});
+            id++;
+          }
+        }
+      });
+    }
+
+    // Load new pairs to fill the board up to 6 pairs
+    function loadNewPairs() {
+      while (currentPairs.length < 6 && remainingPairs.length > 0) {
+        const index = Math.floor(Math.random() * remainingPairs.length);
+        const pair = remainingPairs.splice(index, 1)[0];
+        currentPairs.push(pair);
+      }
+    }
+
+    // Render the game board with two columns
+    function renderGameBoard() {
+      // Clear previous cards
+      englishCardsDiv.innerHTML = '';
+      swedishCardsDiv.innerHTML = '';
+
+      // Create card objects for English and Swedish
+      let englishCards = currentPairs.map(pair => ({
+        pairId: pair.id,
+        text: pair.english,
+        language: 'english'
+      }));
+      let swedishCards = currentPairs.map(pair => ({
+        pairId: pair.id,
+        text: pair.swedish,
+        language: 'swedish'
+      }));
+
+      // Shuffle each column separately
+      englishCards = shuffle(englishCards);
+      swedishCards = shuffle(swedishCards);
+
+      // Render English cards
+      englishCards.forEach(card => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.textContent = card.text;
+        div.dataset.pairId = card.pairId;
+        div.dataset.language = card.language;
+        div.addEventListener('click', handleCardClick);
+        englishCardsDiv.appendChild(div);
+      });
+
+      // Render Swedish cards
+      swedishCards.forEach(card => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.textContent = card.text;
+        div.dataset.pairId = card.pairId;
+        div.dataset.language = card.language;
+        div.addEventListener('click', handleCardClick);
+        swedishCardsDiv.appendChild(div);
+      });
+    }
+
+    // Handle a card being clicked
+    function handleCardClick(event) {
+      const card = event.currentTarget;
+      // Ignore already matched cards
+      if (card.classList.contains('matched')) return;
+
+      // If no card is selected, mark this one
+      if (!selectedCard) {
+        selectedCard = card;
+        card.classList.add('selected');
+      } else {
+        // If the same card is clicked twice, ignore
+        if (card === selectedCard) return;
+
+        // If both cards are from the same language, reset selection to the new card
+        if (card.dataset.language === selectedCard.dataset.language) {
+          selectedCard.classList.remove('selected');
+          selectedCard = card;
+          card.classList.add('selected');
+          return;
+        }
+
+        // Check if the two cards match (by pairId)
+        if (card.dataset.pairId === selectedCard.dataset.pairId) {
+          // Correct match!
+          card.classList.add('matched');
+          selectedCard.classList.add('matched');
+          const matchedPairId = card.dataset.pairId;
+          // Remove the matched pair from the current board
+          currentPairs = currentPairs.filter(pair => pair.id != matchedPairId);
+          matchedPairsCount++;
+          // Clear selection
+          selectedCard.classList.remove('selected');
+          selectedCard = null;
+          // After every 2 matches, try to load new pairs and re-render the board
+          if (matchedPairsCount % 2 === 0) {
+            loadNewPairs();
+            setTimeout(renderGameBoard, 500);
+          }
+        } else {
+          // Incorrect match: flash red
+          card.style.backgroundColor = '#f88';
+          selectedCard.style.backgroundColor = '#f88';
+          // Record the mismatch count for this pair
+          const pairId = card.dataset.pairId;
+          mismatchCounts[pairId] = (mismatchCounts[pairId] || 0) + 1;
+          setTimeout(() => {
+            card.style.backgroundColor = '';
+            selectedCard.style.backgroundColor = '';
+          }, 500);
+          // Clear selection
+          selectedCard.classList.remove('selected');
+          selectedCard = null;
+        }
+      }
+    }
+
+    // Start the countdown timer
+    function startTimer() {
+      timerDisplay.textContent = formatTime(timeLeft);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = formatTime(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    // Format seconds as mm:ss
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    // End the game and show the results
+    function endGame() {
+      // Remove event listeners to disable further clicks
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+      });
+      // Hide the game section and show the results section
+      gameSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+      scoreDisplay.textContent = 'Total correct matches: ' + matchedPairsCount;
+      
+      // Build a simple mismatch report
+      let reportHTML = '<h3>Words to Review:</h3><ul>';
+      vocabularyPairs.forEach(pair => {
+        const mismatches = mismatchCounts[pair.id] || 0;
+        if (mismatches > 0) {
+          reportHTML += '<li>' + pair.english + ' - ' + pair.swedish +
+                        ' (mismatches: ' + mismatches + ')</li>';
+        }
+      });
+      reportHTML += '</ul>';
+      mismatchReport.innerHTML = reportHTML;
+    }
   </script>
 </body>
 </html>
