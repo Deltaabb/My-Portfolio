@@ -1,5 +1,4 @@
-/* styles.css */
-/* General Styles */
+/* General Styles (Existing Styles) */
 :root {
   /* Light Mode Colors */
   --main-bg: #FBF5F3;
@@ -11,19 +10,20 @@
   --fun2: #FFC72C;
   --fun3: #02B99C;
   --fun4: #FE8463;
-  
+
   /* Dark Mode Colors */
   --dark-main-bg: #1A1A1A;
   --dark-secondary-bg: #2D2D2D;
   --dark-title-text: #E0E0E0;
   --dark-body-text: #CCCCCC;
-  
+
   /* Shared Variables */
   --transition-speed: 0.3s;
   --neutral-color: #666;
   --border-radius: 12px;
 }
 
+/* Body */
 body {
   font-family: 'Lato', sans-serif;
   margin: 0;
@@ -33,26 +33,14 @@ body {
   transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
+/* Dark Mode Styles */
 body.dark-mode {
   background-color: var(--dark-main-bg);
   color: var(--dark-body-text);
 }
 
-h1, h2, h3 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  color: var(--title-text);
-}
-
-body.dark-mode h1,
-body.dark-mode h2,
-body.dark-mode h3 {
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
   color: var(--dark-title-text);
-}
-
-p {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 400;
 }
 
 a {
@@ -83,18 +71,14 @@ body.dark-mode header.scrolled {
   background-color: rgba(26, 26, 26, 0.9);
 }
 
-/* Navigation Bar */
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+/* Navigation Styles */
 nav ul {
-  display: flex;
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 nav ul li {
@@ -104,13 +88,13 @@ nav ul li {
 nav ul li a {
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
-  font-size: 1rem;
   color: var(--body-text);
+  padding: 0.5rem;
+  display: inline-block;
   transition: color var(--transition-speed);
 }
 
-nav ul li a:hover,
-nav ul li a:focus {
+nav ul li a:hover {
   color: var(--primary-cta);
 }
 
@@ -119,40 +103,16 @@ nav ul li:nth-child(2) a::after { background-color: var(--fun3); }
 nav ul li:nth-child(3) a::after { background-color: var(--fun2); }
 nav ul li:nth-child(4) a::after { background-color: var(--fun4); }
 
-/* Project Cards */
-.project-card {
-  background: var(--secondary-bg);
-  border-radius: var(--border-radius);
-  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+/* Styling for the "active" state of the navigation items */
+nav ul li a.active {
+  color: var(--primary-cta);
+  font-weight: 700;
 }
 
-body.dark-mode .project-card {
-  background: var(--dark-secondary-bg);
+body.dark-mode nav ul li a {
+  color: var(--dark-body-text);
 }
 
-.rounded-image {
-  border-radius: var(--border-radius);
+body.dark-mode nav ul li a:hover {
+  color: var(--primary-cta);
 }
-
-/* Hero Section */
-.hero {
-  background-color: var(--secondary-bg);
-  color: var(--body-text);
-}
-
-body.dark-mode .hero {
-  background-color: var(--dark-secondary-bg);
-}
-
-/* Footer */
-footer {
-  background-color: var(--secondary-bg);
-  color: var(--body-text);
-}
-
-body.dark-mode footer {
-  background-color: var(--dark-secondary-bg);
-}
-
-/* Rest of your existing styles remain the same below this point */
-/* (Include all remaining CSS from your original file here) */
