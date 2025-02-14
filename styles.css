@@ -1,0 +1,127 @@
+/* styles.css */
+/* General Styles */
+:root {
+  /* Light Mode Colors */
+  --main-bg: #FBF5F3;
+  --secondary-bg: #F7ECE1;
+  --primary-cta: #FE8463;
+  --title-text: #242038;
+  --body-text: #1C1A1D;
+  --fun1: #8C8CFE;
+  --fun2: #FFC72C;
+  --fun3: #02B99C;
+  --fun4: #FE8463;
+  
+  /* Dark Mode Colors */
+  --dark-main-bg: #1A1A1A;
+  --dark-secondary-bg: #2D2D2D;
+  --dark-title-text: #E0E0E0;
+  --dark-body-text: #CCCCCC;
+  
+  /* Shared Variables */
+  --transition-speed: 0.3s;
+  --neutral-color: #666;
+  --border-radius: 12px;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--main-bg);
+  color: var(--body-text);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+body.dark-mode {
+  background-color: var(--dark-main-bg);
+  color: var(--dark-body-text);
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: var(--title-text);
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+  color: var(--dark-title-text);
+}
+
+p {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+a {
+  color: var(--body-text);
+  text-decoration: none;
+}
+
+body.dark-mode a {
+  color: var(--dark-body-text);
+}
+
+/* Header and Navigation */
+header {
+  position: sticky;
+  top: 0;
+  background-color: transparent;
+  padding: 1rem 2rem;
+  z-index: 1000;
+  transition: background-color var(--transition-speed), backdrop-filter var(--transition-speed);
+}
+
+header.scrolled {
+  background-color: rgba(247, 236, 225, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+body.dark-mode header.scrolled {
+  background-color: rgba(26, 26, 26, 0.9);
+}
+
+nav ul li:nth-child(1) a::after { background-color: var(--fun1); }
+nav ul li:nth-child(2) a::after { background-color: var(--fun3); }
+nav ul li:nth-child(3) a::after { background-color: var(--fun2); }
+nav ul li:nth-child(4) a::after { background-color: var(--fun4); }
+
+/* Project Cards */
+.project-card {
+  background: var(--secondary-bg);
+  border-radius: var(--border-radius);
+  transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+body.dark-mode .project-card {
+  background: var(--dark-secondary-bg);
+}
+
+.rounded-image {
+  border-radius: var(--border-radius);
+}
+
+/* Hero Section */
+.hero {
+  background-color: var(--secondary-bg);
+  color: var(--body-text);
+}
+
+body.dark-mode .hero {
+  background-color: var(--dark-secondary-bg);
+}
+
+/* Footer */
+footer {
+  background-color: var(--secondary-bg);
+  color: var(--body-text);
+}
+
+body.dark-mode footer {
+  background-color: var(--dark-secondary-bg);
+}
+
+/* Rest of your existing styles remain the same below this point */
+/* (Include all remaining CSS from your original file here) */
