@@ -3,192 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Delta</title>
+  <title>Delta's UX/UI Portfolio</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Embedded CSS -->
   <style>
     /* General Styles */
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
-      line-height: 1.6;
+    :root {
+      --primary-cta: #FF4F5A;
+      --light-bg: #FBF5F3;
+      --dark-bg: #121212;
+      --light-text: #212121;
+      --dark-text: #FAFAFA;
+      --transition-speed: 0.3s;
+      --pastel-warm-light: #FFE5B4;
+      --pastel-warm-dark: #D2B48C;
+      --neutral-color: #666;
     }
 
-    h1 {
-      font-size: 2.5rem;
-      color: #ff6f61;
-      margin-bottom: 1rem;
+    body {
+      font-family: 'Lato', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-bg);
+      color: var(--light-text);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    h1, h2, h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
     }
 
     p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400;
     }
 
     a {
-      color: #ff6f61;
+      color: var(--light-text);
       text-decoration: none;
     }
 
-    a:hover {
-      text-decoration: underline;
+    body.dark-mode a {
+      color: var(--dark-text);
     }
 
-    /* Contact Section */
-    #contact {
-      max-width: 600px;
+    /* Navigation Bar */
+    nav {
+      background-color: var(--primary-cta);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 15px;
+      font-weight: 700;
+    }
+
+    /* Contact Form */
+    .contact-form {
+      max-width: 500px;
       margin: 2rem auto;
       padding: 2rem;
-      background: #fff;
+      background: white;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    /* Form Styles */
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
+    .contact-form input,
+    .contact-form textarea {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 1rem;
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 150px;
+    .contact-form textarea {
+      height: 150px;
     }
 
-    /* Button Styles */
-    button {
-      background: #ff6f61;
-      color: #fff;
+    .contact-form button {
+      background-color: var(--primary-cta);
+      color: white;
+      padding: 10px 20px;
       border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.1);
-    }
-
-    button:active {
-      animation: ripple 0.6s linear;
-    }
-
-    @keyframes ripple {
-      to {
-        transform: scale(1.5);
-        opacity: 0;
-      }
-    }
-
-    /* Social Links */
-    .social-links {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 1rem;
-    }
-
-    .social-links a {
-      font-size: 1.5rem;
-      color: #333;
-      transition: transform 0.2s ease;
-    }
-
-    .social-links a:hover {
-      transform: translateY(-5px);
-      color: #ff6f61;
-    }
-
-    /* Accessibility Focus States */
-    input:focus, textarea:focus, button:focus {
-      outline: 2px solid #ff6f61;
-      outline-offset: 2px;
     }
   </style>
 </head>
 <body>
-<!-- Navigation Bar -->
-  <header>
-    <nav>
-      <div class="logo">DA</div>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About Me</a></li>
-        <li><a href="mywork.html">My Work</a></li>
-        <li><a href="contact.html"
-class="current-page">Contact</a></li>
-      </ul>
-      <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
-    </nav>
-  </header>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About Me</a>
+    <a href="projects.html">Projects</a>
+    <a href="contact.html">Contact</a>
+  </nav>
 
-
-  <section id="contact">
-    <h1>Let’s Chat!</h1>
-    <p>I’d love to hear from you! Whether it’s about a project, collaboration, or just to say hi, feel free to reach out.</p>
-
-    <!-- Contact Form -->
-    <form id="contact-form" action="#" method="POST">
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" required aria-required="true">
-
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required aria-required="true">
-
-      <label for="subject">Subject</label>
-      <input type="text" id="subject" name="subject" required aria-required="true">
-
-      <label for="message">Message</label>
-      <textarea id="message" name="message" required aria-required="true"></textarea>
-
-      <button type="submit">Send Message</button>
+  <h1>Contact Me</h1>
+  <div class="contact-form">
+    <form>
+      <textarea name="message" placeholder="Your message"></textarea>
+      <button type="submit">Send</button>
     </form>
-
-    <!-- Alternative Contact Methods -->
-    <div class="alternative-contact">
-      <p>Email me at: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
-      <div class="social-links">
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-        <a href="#" aria-label="Behance"><i class="fab fa-behance"></i></a>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // JavaScript for Form Submission
-    document.getElementById('contact-form').addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent default form submission
-
-      // Basic validation
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const message = document.getElementById('message').value.trim();
-
-      if (!name || !email || !message) {
-        alert('Please fill out all fields.');
-        return;
-      }
-
-      // Simulate form submission (replace with Netlify or other backend handling)
-      alert('Thank you for reaching out! I’ll get back to you soon.');
-      document.getElementById('contact-form').reset(); // Clear the form
-    });
-  </script>
-
-  <!-- Font Awesome for Social Icons -->
-  <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+  </div>
 </body>
 </html>
