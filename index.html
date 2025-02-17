@@ -2,30 +2,64 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Swedish Vocabulary Matching Gameee</title>
+  <title>Swedish Vocabulary Matching Game</title>
+  <!-- Load Lexend font with several weights -->
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Global Styles */
     body {
-      font-family: sans-serif;
+      font-family: 'Lexend', sans-serif;
+      background-color: #f7f7ff; /* soft pastel background */
       margin: 20px;
       max-width: 600px;
       margin-left: auto;
       margin-right: auto;
+      color: #333;
     }
-    .hidden { display: none; }
-    #vocabInput {
+    h1 {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-weight: 500;
+      margin: 10px 0;
+    }
+    h3 {
+      font-weight: 300;
+      margin: 10px 0 5px;
+    }
+    .hidden {
+      display: none;
+    }
+    
+    /* Input Section */
+    textarea {
       width: 100%;
       height: 200px;
       font-size: 16px;
-      padding: 8px;
+      padding: 10px;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
     }
     button {
       padding: 10px 20px;
       font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #a3c4f3; /* pastel blue */
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
     }
     button:disabled {
       opacity: 0.5;
+      cursor: not-allowed;
     }
+    
+    /* Game Board */
     #gameBoard {
       display: flex;
       justify-content: space-between;
@@ -34,21 +68,42 @@
     .column {
       width: 45%;
     }
+    .slot {
+      height: 50px;   /* fixed height for card slots */
+      margin: 5px 0;
+      position: relative;
+    }
     .card {
-      background: #f0f0f0;
-      padding: 10px;
-      margin: 5px;
-      text-align: center;
-      border: 1px solid #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
-      user-select: none;
+      transition: opacity 0.5s ease, background-color 0.5s ease;
+      font-size: 16px;
     }
-    .selected {
-      background: yellow;
+    /* Visual states for cards */
+    .card.selected {
+      background-color: #fffacd; /* light pastel yellow */
     }
-    .matched {
-      background: lightgreen;
+    .card.correct {
+      background-color: #c8e6c9; /* pastel green */
     }
+    .card.wrong {
+      background-color: #ffcdd2; /* pastel red */
+    }
+    .fade-out {
+      opacity: 0;
+    }
+    
+    /* Timer & Results */
     #timer {
       font-size: 24px;
       text-align: center;
@@ -81,13 +136,11 @@
   <div id="gameSection" class="hidden">
     <div id="timer">02:00</div>
     <div id="gameBoard">
-      <div id="englishColumn" class="column">
+      <div id="englishCards" class="column">
         <h3>English</h3>
-        <div id="englishCards"></div>
       </div>
-      <div id="swedishColumn" class="column">
+      <div id="swedishCards" class="column">
         <h3>Swedish</h3>
-        <div id="swedishCards"></div>
       </div>
     </div>
   </div>
@@ -100,7 +153,7 @@
   </div>
 
   <script>
-    // Utility function to shuffle an array
+    /* ---------- Utility Function ---------- */
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -109,17 +162,21 @@
       return array;
     }
 
-    // Global variables to hold our game state
+    /* ---------- Global Game State ---------- */
     let vocabularyPairs = [];
     let remainingPairs = [];
-    let currentPairs = [];
+    let currentPairs = []; // pairs currently displayed on board
     let matchedPairsCount = 0;
     let selectedCard = null;
     let timerInterval;
-    let timeLeft = 120; // 2 minutes in seconds
+    let timeLeft = 120; // seconds
     let mismatchCounts = {}; // { pairId: count }
 
-    // DOM Elements
+    const totalSlots = 6; // fixed number of slots per column
+    let englishSlots = [];
+    let swedishSlots = [];
+
+    /* ---------- DOM Elements ---------- */
     const vocabInput = document.getElementById('vocabInput');
     const startButton = document.getElementById('startButton');
     const inputSection = document.getElementById('inputSection');
@@ -131,14 +188,13 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const mismatchReport = document.getElementById('mismatchReport');
 
-    // Enable the Start Game button when there's input
-    vocabInput.addEventListener('input', function() {
-      const text = vocabInput.value.trim();
-      startButton.disabled = text.length === 0;
+    /* ---------- Event Listeners ---------- */
+    // Enable Start Game button when input exists
+    vocabInput.addEventListener('input', () => {
+      startButton.disabled = vocabInput.value.trim().length === 0;
     });
 
-    // When the Start Game button is clicked...
-    startButton.addEventListener('click', function() {
+    startButton.addEventListener('click', () => {
       parseVocabulary();
       if (vocabularyPairs.length === 0) {
         alert("No valid vocabulary pairs found. Please check your input.");
@@ -152,191 +208,25 @@
       selectedCard = null;
       timeLeft = 120;
       
+      // Load initial pairs (up to totalSlots)
+      loadInitialPairs();
+      
+      // Setup fixed board slots (each column will have 6 fixed positions)
+      initializeBoardSlots();
+      
       // Hide input, show game
       inputSection.classList.add('hidden');
       gameSection.classList.remove('hidden');
       resultsSection.classList.add('hidden');
       
-      // Initialize board with up to 6 pairs
-      loadNewPairs();
-      renderGameBoard();
       startTimer();
     });
 
-    // Parse the vocabulary from the textarea
+    /* ---------- Parsing and Initial Pair Loading ---------- */
     function parseVocabulary() {
       vocabularyPairs = [];
       const lines = vocabInput.value.trim().split('\n');
       let id = 0;
       lines.forEach(line => {
-        // Split by tab or comma
-        let parts = line.split(/\t|,/);
-        if (parts.length >= 2) {
-          const english = parts[0].trim();
-          const swedish = parts[1].trim();
-          if (english && swedish) {
-            vocabularyPairs.push({id: id, english: english, swedish: swedish});
-            id++;
-          }
-        }
-      });
-    }
-
-    // Load new pairs to fill the board up to 6 pairs
-    function loadNewPairs() {
-      while (currentPairs.length < 6 && remainingPairs.length > 0) {
-        const index = Math.floor(Math.random() * remainingPairs.length);
-        const pair = remainingPairs.splice(index, 1)[0];
-        currentPairs.push(pair);
-      }
-    }
-
-    // Render the game board with two columns
-    function renderGameBoard() {
-      // Clear previous cards
-      englishCardsDiv.innerHTML = '';
-      swedishCardsDiv.innerHTML = '';
-
-      // Create card objects for English and Swedish
-      let englishCards = currentPairs.map(pair => ({
-        pairId: pair.id,
-        text: pair.english,
-        language: 'english'
-      }));
-      let swedishCards = currentPairs.map(pair => ({
-        pairId: pair.id,
-        text: pair.swedish,
-        language: 'swedish'
-      }));
-
-      // Shuffle each column separately
-      englishCards = shuffle(englishCards);
-      swedishCards = shuffle(swedishCards);
-
-      // Render English cards
-      englishCards.forEach(card => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.textContent = card.text;
-        div.dataset.pairId = card.pairId;
-        div.dataset.language = card.language;
-        div.addEventListener('click', handleCardClick);
-        englishCardsDiv.appendChild(div);
-      });
-
-      // Render Swedish cards
-      swedishCards.forEach(card => {
-        const div = document.createElement('div');
-        div.className = 'card';
-        div.textContent = card.text;
-        div.dataset.pairId = card.pairId;
-        div.dataset.language = card.language;
-        div.addEventListener('click', handleCardClick);
-        swedishCardsDiv.appendChild(div);
-      });
-    }
-
-    // Handle a card being clicked
-    function handleCardClick(event) {
-      const card = event.currentTarget;
-      // Ignore already matched cards
-      if (card.classList.contains('matched')) return;
-
-      // If no card is selected, mark this one
-      if (!selectedCard) {
-        selectedCard = card;
-        card.classList.add('selected');
-      } else {
-        // If the same card is clicked twice, ignore
-        if (card === selectedCard) return;
-
-        // If both cards are from the same language, reset selection to the new card
-        if (card.dataset.language === selectedCard.dataset.language) {
-          selectedCard.classList.remove('selected');
-          selectedCard = card;
-          card.classList.add('selected');
-          return;
-        }
-
-        // Check if the two cards match (by pairId)
-        if (card.dataset.pairId === selectedCard.dataset.pairId) {
-          // Correct match!
-          card.classList.add('matched');
-          selectedCard.classList.add('matched');
-          const matchedPairId = card.dataset.pairId;
-          // Remove the matched pair from the current board
-          currentPairs = currentPairs.filter(pair => pair.id != matchedPairId);
-          matchedPairsCount++;
-          // Clear selection
-          selectedCard.classList.remove('selected');
-          selectedCard = null;
-          // After every 2 matches, try to load new pairs and re-render the board
-          if (matchedPairsCount % 2 === 0) {
-            loadNewPairs();
-            setTimeout(renderGameBoard, 500);
-          }
-        } else {
-          // Incorrect match: flash red
-          card.style.backgroundColor = '#f88';
-          selectedCard.style.backgroundColor = '#f88';
-          // Record the mismatch count for this pair
-          const pairId = card.dataset.pairId;
-          mismatchCounts[pairId] = (mismatchCounts[pairId] || 0) + 1;
-          setTimeout(() => {
-            card.style.backgroundColor = '';
-            selectedCard.style.backgroundColor = '';
-          }, 500);
-          // Clear selection
-          selectedCard.classList.remove('selected');
-          selectedCard = null;
-        }
-      }
-    }
-
-    // Start the countdown timer
-    function startTimer() {
-      timerDisplay.textContent = formatTime(timeLeft);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = formatTime(timeLeft);
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          endGame();
-        }
-      }, 1000);
-    }
-
-    // Format seconds as mm:ss
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    }
-
-    // End the game and show the results
-    function endGame() {
-      // Remove event listeners to disable further clicks
-      const cards = document.querySelectorAll('.card');
-      cards.forEach(card => {
-        card.removeEventListener('click', handleCardClick);
-      });
-      // Hide the game section and show the results section
-      gameSection.classList.add('hidden');
-      resultsSection.classList.remove('hidden');
-      scoreDisplay.textContent = 'Total correct matches: ' + matchedPairsCount;
-      
-      // Build a simple mismatch report
-      let reportHTML = '<h3>Words to Review:</h3><ul>';
-      vocabularyPairs.forEach(pair => {
-        const mismatches = mismatchCounts[pair.id] || 0;
-        if (mismatches > 0) {
-          reportHTML += '<li>' + pair.english + ' - ' + pair.swedish +
-                        ' (mismatches: ' + mismatches + ')</li>';
-        }
-      });
-      reportHTML += '</ul>';
-      mismatchReport.innerHTML = reportHTML;
-    }
-  </script>
-</body>
-</html>
+        // Split on tab or comma
+        let parts = line.split(/\t|
