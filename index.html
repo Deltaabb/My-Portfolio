@@ -1,73 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delta's UX/UI Portfolio</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Link to external CSS file -->
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <!-- Header -->
-  <header>
-    <nav>
-      <div class="logo" onclick="window.location.href='index.html'">DA</div>
-      <ul>
-        <li><a href="index.html" class="current-page">Home</a></li>
-        <li><a href="about.html">About Me</a></li>
-        <li><a href="mywork.html">My Work</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      <button class="mode-toggle" onclick="toggleMode()">🌙 Dark Mode</button>
-    </nav>
-  </header>
+/* ====================== */
+/* Header and Navigation */
+/* ====================== */
 
-  <!-- Hero Section -->
-  <section id="home" class="hero">
-    <h1>Designs that look great, feel natural, and actually work. No fluff, just good design.</h1>
-    <p>Hi, I’m Delta, and I make user experiences that don’t suck.</p>
-    <div class="cta">
-      <span>Check out my work!</span>
-      <span class="arrow">➤</span>
-    </div>
-  </section>
+header {
+  position: sticky;
+  top: 0;
+  background-color: var(--main-bg);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+}
 
-  <!-- Projects Section -->
-  <section id="work" class="projects">
-    <div class="project-card">
-      <img src="Images/Homepage/mias1.png" alt="Mia’s Patisserie">
-      <div>
-        <h3>Mia’s Patisserie</h3>
-        <p>Ever found yourself at a restaurant with a big group, awkwardly passing a phone around so everyone can choose their order? Mia’s Patisserie is a mobile food menu and ordering app designed to make group ordering simple, fun, and seamless.</p>
-      </div>
-    </div>
-    <div class="project-card">
-      <img src="Images/Homepage/website1.png" alt="Portfolio Website">
-      <div>
-        <h3>Portfolio Website</h3>
-        <p>Curious about the thought process behind this website? Explore its features firsthand and discover the ideas that brought it to life.</p>
-      </div>
-    </div>
-    <div class="project-card">
-      <img src="Images/Homepage/sulphur.png" alt="Neon Line Art Collection">
-      <div>
-        <h3>Neon Line Art Collection</h3>
-        <p>What began as a fun experiment turned into a series of bold, custom illustrations brought to life in glowing neon lines.</p>
-      </div>
-    </div>
-  </section>
+body.dark-mode header {
+  background-color: var(--dark-main-bg);
+}
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 Delta's UX/UI Portfolio. All Rights Reserved.</p>
-  </footer>
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  <script>
-    function toggleMode() {
-      document.body.classList.toggle('dark-mode');
-    }
-  </script>
-</body>
-</html>
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 2rem;
+}
+
+nav ul li {
+  position: relative;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--body-text);
+  font-weight: bold;
+  padding-bottom: 5px;
+  transition: color var(--transition-speed);
+}
+
+nav ul li a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  transition: width var(--transition-speed), transform var(--transition-speed);
+}
+
+nav ul li a:hover::after {
+  width: 100%;
+  transform: translateY(5px);
+}
+
+nav ul li a.current-page {
+  color: var(--body-text);
+}
+
+body.dark-mode nav ul li a {
+  color: var(--dark-body-text);
+}
+
+body.dark-mode nav ul li a.current-page {
+  color: #999;
+}
+
+.logo {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding-left: 1rem;
+  cursor: pointer;
+}
+
+/* Mode Toggle Button */
+.mode-toggle {
+  background: transparent;
+  border: 2px solid var(--neutral-color);
+  color: var(--neutral-color);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
+}
+
+body.dark-mode .mode-toggle {
+  border-color: #999;
+  color: #999;
+}
+
+.mode-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Scrolled Header Effect */
+header.scrolled {
+  background-color: rgba(247, 236, 225, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+body.dark-mode header.scrolled {
+  background-color: rgba(26, 26, 26, 0.9);
+}
+
+/* Navigation Underline Colors */
+nav ul li:nth-child(1) a::after { background-color: var(--fun1); }
+nav ul li:nth-child(2) a::after { background-color: var(--fun3); }
+nav ul li:nth-child(3) a::after { background-color: var(--fun2); }
+nav ul li:nth-child(4) a::after { background-color: var(--fun4); }
