@@ -68,10 +68,14 @@
     .column {
       width: 45%;
     }
+    /* Each column will have 6 fixed slots */
     .slot {
-      height: 50px;   /* fixed height for card slots */
+      height: 50px;
       margin: 5px 0;
       position: relative;
+      border: 1px dashed #ddd;
+      border-radius: 8px;
+      background-color: #fafafa;
     }
     .card {
       position: absolute;
@@ -79,8 +83,6 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: #fff;
-      border: 1px solid #ddd;
       border-radius: 8px;
       display: flex;
       justify-content: center;
@@ -88,17 +90,26 @@
       cursor: pointer;
       transition: opacity 0.5s ease, background-color 0.5s ease;
       font-size: 16px;
+      user-select: none;
     }
-    /* Visual states for cards */
+    /* Default card style */
+    .card.default {
+      background-color: #fff;
+      border: 1px solid #eee;
+    }
+    /* Selected card */
     .card.selected {
       background-color: #fffacd; /* light pastel yellow */
     }
+    /* Correct match */
     .card.correct {
       background-color: #c8e6c9; /* pastel green */
     }
+    /* Incorrect match */
     .card.wrong {
       background-color: #ffcdd2; /* pastel red */
     }
+    /* Fade-out animation */
     .fade-out {
       opacity: 0;
     }
@@ -138,9 +149,11 @@
     <div id="gameBoard">
       <div id="englishCards" class="column">
         <h3>English</h3>
+        <!-- 6 fixed slots -->
       </div>
       <div id="swedishCards" class="column">
         <h3>Swedish</h3>
+        <!-- 6 fixed slots -->
       </div>
     </div>
   </div>
@@ -153,30 +166,27 @@
   </div>
 
   <script>
-    /* ---------- Utility Function ---------- */
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    /* ---------- Global Game State ---------- */
-    let vocabularyPairs = [];
-    let remainingPairs = [];
-    let currentPairs = []; // pairs currently displayed on board
-    let matchedPairsCount = 0;
-    let selectedCard = null;
-    let timerInterval;
-    let timeLeft = 120; // seconds
-    let mismatchCounts = {}; // { pairId: count }
+    /********************
+     * Global Variables *
+     ********************/
+    let vocabularyPairs = [];   // All pairs from user input
+    let remainingPairs = [];    // Pairs not yet on board
+    let matchedPairsCount = 0;  // Total number of correct matches
+    let mismatchCounts = {};    // { pairId: count }
+    let selectedCard = null;    // { column, slot, pairId, element }
 
     const totalSlots = 6; // fixed number of slots per column
-    let englishSlots = [];
-    let swedishSlots = [];
 
-    /* ---------- DOM Elements ---------- */
+    // Board arrays: each index (0 to 5) holds a pair object or null.
+    const englishBoard = new Array(totalSlots).fill(null);
+    const swedishBoard = new Array(totalSlots).fill(null);
+
+    let timerInterval;
+    let timeLeft = 120; // in seconds
+
+    /*******************
+     * DOM References  *
+     *******************/
     const vocabInput = document.getElementById('vocabInput');
     const startButton = document.getElementById('startButton');
     const inputSection = document.getElementById('inputSection');
@@ -188,8 +198,31 @@
     const scoreDisplay = document.getElementById('scoreDisplay');
     const mismatchReport = document.getElementById('mismatchReport');
 
-    /* ---------- Event Listeners ---------- */
-    // Enable Start Game button when input exists
+    /***********************
+     * Initialize Slots    *
+     ***********************/
+    function initializeBoardSlots() {
+      // Clear any existing slots.
+      englishCardsDiv.innerHTML = '';
+      swedishCardsDiv.innerHTML = '';
+
+      for (let i = 0; i < totalSlots; i++) {
+        const engSlot = document.createElement('div');
+        engSlot.className = 'slot';
+        engSlot.dataset.slot = i;
+        englishCardsDiv.appendChild(engSlot);
+
+        const sweSlot = document.createElement('div');
+        sweSlot.className = 'slot';
+        sweSlot.dataset.slot = i;
+        swedishCardsDiv.appendChild(sweSlot);
+      }
+    }
+
+    /*************************
+     * Event Listeners Setup *
+     *************************/
+    // Enable Start button when there is some input.
     vocabInput.addEventListener('input', () => {
       startButton.disabled = vocabInput.value.trim().length === 0;
     });
@@ -202,31 +235,271 @@
       }
       // Reset game state
       remainingPairs = vocabularyPairs.slice();
-      currentPairs = [];
       matchedPairsCount = 0;
       mismatchCounts = {};
       selectedCard = null;
       timeLeft = 120;
-      
-      // Load initial pairs (up to totalSlots)
-      loadInitialPairs();
-      
-      // Setup fixed board slots (each column will have 6 fixed positions)
+
+      // Initialize board slots and empty board arrays
       initializeBoardSlots();
-      
-      // Hide input, show game
+      for (let i = 0; i < totalSlots; i++) {
+        englishBoard[i] = null;
+        swedishBoard[i] = null;
+      }
+      // Fill the board with as many pairs as possible.
+      fillEmptySlots(true);
+
+      // Show game section, hide input and results.
       inputSection.classList.add('hidden');
-      gameSection.classList.remove('hidden');
       resultsSection.classList.add('hidden');
-      
+      gameSection.classList.remove('hidden');
+
+      renderBoard();
       startTimer();
     });
 
-    /* ---------- Parsing and Initial Pair Loading ---------- */
+    /***********************
+     * Parsing Vocabulary  *
+     ***********************/
     function parseVocabulary() {
       vocabularyPairs = [];
       const lines = vocabInput.value.trim().split('\n');
       let id = 0;
       lines.forEach(line => {
-        // Split on tab or comma
-        let parts = line.split(/\t|
+        // Split on tab or comma.
+        let parts = line.split(/\t|,/);
+        if (parts.length >= 2) {
+          const english = parts[0].trim();
+          const swedish = parts[1].trim();
+          if (english && swedish) {
+            vocabularyPairs.push({ id: id, english: english, swedish: swedish });
+            id++;
+          }
+        }
+      });
+    }
+
+    /***********************************
+     * Timer Functions                 *
+     ***********************************/
+    function startTimer() {
+      timerDisplay.textContent = formatTime(timeLeft);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = formatTime(timeLeft);
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    /********************************************
+     * Rendering the Board (Fixed Slots)        *
+     ********************************************/
+    function renderBoard() {
+      // Render English column
+      const engSlots = englishCardsDiv.querySelectorAll('.slot');
+      engSlots.forEach((slotEl, index) => {
+        slotEl.innerHTML = ''; // clear slot
+        if (englishBoard[index]) {
+          const card = createCardElement(englishBoard[index].english, englishBoard[index].id, 'english', index);
+          slotEl.appendChild(card);
+        }
+      });
+      // Render Swedish column
+      const sweSlots = swedishCardsDiv.querySelectorAll('.slot');
+      sweSlots.forEach((slotEl, index) => {
+        slotEl.innerHTML = ''; // clear slot
+        if (swedishBoard[index]) {
+          const card = createCardElement(swedishBoard[index].swedish, swedishBoard[index].id, 'swedish', index);
+          slotEl.appendChild(card);
+        }
+      });
+    }
+
+    function createCardElement(text, pairId, language, slot) {
+      const card = document.createElement('div');
+      card.className = 'card default';
+      card.textContent = text;
+      card.dataset.pairId = pairId;
+      card.dataset.language = language;
+      card.dataset.slot = slot;
+      card.addEventListener('click', handleCardClick);
+      // Fade in effect:
+      card.style.opacity = 0;
+      setTimeout(() => { card.style.opacity = 1; }, 100);
+      return card;
+    }
+
+    /******************************************************
+     * Handling Card Clicks and Matching Logic           *
+     ******************************************************/
+    function handleCardClick(event) {
+      const card = event.currentTarget;
+      // Ignore clicks on cards already fading out (matched) or marked as correct.
+      if (card.classList.contains('fade-out') || card.classList.contains('correct')) return;
+
+      // If no card is selected, mark this card as selected.
+      if (!selectedCard) {
+        selectedCard = {
+          column: card.dataset.language,
+          slot: card.dataset.slot,
+          pairId: card.dataset.pairId,
+          element: card
+        };
+        card.classList.add('selected');
+      } else {
+        // If the same card is clicked twice, ignore.
+        if (card === selectedCard.element) return;
+
+        // If both selected cards are from the same column, switch selection.
+        if (card.dataset.language === selectedCard.column) {
+          selectedCard.element.classList.remove('selected');
+          selectedCard = {
+            column: card.dataset.language,
+            slot: card.dataset.slot,
+            pairId: card.dataset.pairId,
+            element: card
+          };
+          card.classList.add('selected');
+          return;
+        }
+        // Now, cards are from different columns.
+        if (card.dataset.pairId === selectedCard.pairId) {
+          // Correct match!
+          card.classList.remove('selected');
+          card.classList.add('correct');
+          selectedCard.element.classList.remove('selected');
+          selectedCard.element.classList.add('correct');
+
+          // Remove event listeners by cloning node (to disable further clicks)
+          disableCard(selectedCard.element);
+          disableCard(card);
+
+          // Remove the matched pair from both boards.
+          removeMatchedPair(selectedCard.element.dataset.pairId);
+
+          matchedPairsCount++;
+
+          // After fade-out, fill empty slots.
+          // Determine delay: if all slots are empty (i.e. 6 pairs missing), shorten delay.
+          const emptyCount = countEmptyPairs();
+          const delay = (emptyCount === totalSlots ? 500 : 2000);
+          setTimeout(fillEmptySlots, delay);
+
+          selectedCard = null;
+        } else {
+          // Incorrect match.
+          card.classList.add('wrong');
+          selectedCard.element.classList.add('wrong');
+
+          // Record mismatch.
+          const pid = card.dataset.pairId;
+          mismatchCounts[pid] = (mismatchCounts[pid] || 0) + 1;
+
+          // After a short delay, remove the wrong highlight.
+          setTimeout(() => {
+            card.classList.remove('wrong');
+            selectedCard.element.classList.remove('wrong');
+          }, 500);
+          selectedCard.element.classList.remove('selected');
+          selectedCard = null;
+        }
+      }
+    }
+
+    function disableCard(cardElement) {
+      const newCard = cardElement.cloneNode(true);
+      newCard.removeEventListener('click', handleCardClick);
+      cardElement.parentNode.replaceChild(newCard, cardElement);
+    }
+
+    function removeMatchedPair(pairId) {
+      // Remove from englishBoard
+      for (let i = 0; i < totalSlots; i++) {
+        if (englishBoard[i] && englishBoard[i].id == pairId) {
+          englishBoard[i] = null;
+        }
+      }
+      // Remove from swedishBoard
+      for (let i = 0; i < totalSlots; i++) {
+        if (swedishBoard[i] && swedishBoard[i].id == pairId) {
+          swedishBoard[i] = null;
+        }
+      }
+      // Re-render board for visual update (fade-out effect already played)
+      renderBoard();
+    }
+
+    /*****************************************************
+     * Filling Empty Slots with New Pairs                *
+     * If "initial" flag is true, fill all empty slots at  *
+     * game start. Otherwise, fill after a correct match.  *
+     *****************************************************/
+    function fillEmptySlots(initial = false) {
+      // Determine how many pairs we can add.
+      // We add a pair only if both an empty slot in english and swedish exist.
+      let emptyEngIndices = [];
+      let emptySweIndices = [];
+      for (let i = 0; i < totalSlots; i++) {
+        if (!englishBoard[i]) emptyEngIndices.push(i);
+        if (!swedishBoard[i]) emptySweIndices.push(i);
+      }
+      const pairsToFill = Math.min(emptyEngIndices.length, emptySweIndices.length);
+      for (let i = 0; i < pairsToFill; i++) {
+        if (remainingPairs.length === 0) break;
+        const newPair = remainingPairs.shift();
+        // Randomly assign newPair to one empty slot in each column.
+        const engIndex = emptyEngIndices.splice(Math.floor(Math.random() * emptyEngIndices.length), 1)[0];
+        const sweIndex = emptySweIndices.splice(Math.floor(Math.random() * emptySweIndices.length), 1)[0];
+        englishBoard[engIndex] = newPair;
+        swedishBoard[sweIndex] = newPair;
+      }
+      renderBoard();
+    }
+
+    function countEmptyPairs() {
+      // Count how many pairs (by pair id) are missing from both boards.
+      let countEng = 0, countSwe = 0;
+      for (let i = 0; i < totalSlots; i++) {
+        if (!englishBoard[i]) countEng++;
+        if (!swedishBoard[i]) countSwe++;
+      }
+      return Math.min(countEng, countSwe);
+    }
+
+    /**************************
+     * End Game & Results     *
+     **************************/
+    function endGame() {
+      clearInterval(timerInterval);
+      // Disable any remaining card clicks.
+      const allCards = document.querySelectorAll('.card');
+      allCards.forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+      });
+      gameSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+      scoreDisplay.textContent = 'Total correct matches: ' + matchedPairsCount;
+
+      // Build mismatch report.
+      let reportHTML = '<h3>Words to Review:</h3><ul>';
+      vocabularyPairs.forEach(pair => {
+        const mismatches = mismatchCounts[pair.id] || 0;
+        if (mismatches > 0) {
+          reportHTML += `<li>${pair.english} - ${pair.swedish} (mismatches: ${mismatches})</li>`;
+        }
+      });
+      reportHTML += '</ul>';
+      mismatchReport.innerHTML = reportHTML;
+    }
+  </script>
+</body>
+</html>
