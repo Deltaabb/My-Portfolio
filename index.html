@@ -182,4 +182,76 @@
             selectedCards: [],
             correctMatches: 0,
             incorrectMatches: 0,
-            time
+            timeLeft: 120,
+            timerId: null,
+            stats: new Map()
+        };
+
+        // DOM Elements
+        const inputScreen = document.getElementById('inputScreen');
+        const wordInput = document.getElementById('wordInput');
+        const startGameBtn = document.getElementById('startGame');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const gameTimer = document.getElementById('gameTimer');
+        const englishColumn = document.getElementById('englishColumn');
+        const swedishColumn = document.getElementById('swedishColumn');
+        const resultsScreen = document.getElementById('resultsScreen');
+
+        // Event Listeners
+        document.getElementById('increaseTime').addEventListener('click', () => adjustTime(1));
+        document.getElementById('decreaseTime').addEventListener('click', () => adjustTime(-1));
+        document.getElementById('backButton').addEventListener('click', showInputScreen);
+        document.getElementById('finishButton').addEventListener('click', endGame);
+        document.getElementById('replayButton').addEventListener('click', startGame);
+        document.getElementById('newWordsButton').addEventListener('click', showInputScreen);
+        wordInput.addEventListener('input', () => {
+            startGameBtn.disabled = !wordInput.value.trim();
+        });
+        startGameBtn.addEventListener('click', startGame);
+
+        function adjustTime(change) {
+            let [minutes, seconds] = timeDisplay.textContent.match(/\d+/g).map(Number);
+            let totalSeconds = minutes * 60 + seconds + change * 30;
+            totalSeconds = Math.max(30, Math.min(totalSeconds, 600));
+            const newMinutes = Math.floor(totalSeconds / 60);
+            const newSeconds = totalSeconds % 60;
+            timeDisplay.textContent = `⏳ ${String(newMinutes).padStart(1, '0')}:${String(newSeconds).padStart(2, '0')}`;
+            gameState.timeLeft = totalSeconds;
+        }
+
+        function startGame() {
+            if (!parseInput()) return;
+            inputScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            resultsScreen.classList.remove('active');
+            gameState.selectedCards = [];
+            gameState.correctMatches = 0;
+            gameState.incorrectMatches = 0;
+            initializeGameBoard();
+            startTimer();
+        }
+
+        function parseInput() {
+            const lines = wordInput.value.trim().split('\n');
+            gameState.pairs = [];
+            gameState.stats.clear();
+            for (const line of lines) {
+                const [english, swedish] = line.split(',').map(s => s.trim());
+                if (english && swedish) {
+                    gameState.pairs.push({ english, swedish });
+                    gameState.stats.set(english, { correct: 0, incorrect: 0 });
+                }
+            }
+            if (gameState.pairs.length < 6) {
+                alert('Please enter at least 6 word pairs');
+                return false;
+            }
+            return true;
+        }
+
+        function initializeGameBoard() {
+            englishColumn.innerHTML = '';
+            swedishColumn.innerHTML = '';
+            const shuffledPairs = [...gameState.pairs].sort(() => Math.random() - 0.5);
+            gameState.englishWords = shuffledPairs.slice(0, 6).map(p => p.english);
+            gameState.swedishWords = shuffledPairs.slice
