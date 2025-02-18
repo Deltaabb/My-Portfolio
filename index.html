@@ -6,6 +6,7 @@
     <title>Swedish Vocabulary Matching Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Updated CSS with faster animations */
         body {
             font-family: 'Lexend', sans-serif;
             background-color: #f7f7ff;
@@ -50,7 +51,7 @@
             border-radius: 25px;
             cursor: pointer;
             font-family: 'Lexend';
-            transition: background-color 0.3s;
+            transition: all 0.2s;
         }
 
         button:disabled {
@@ -84,22 +85,41 @@
             padding: 20px;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            opacity: 1;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .card.selected {
             background: #fff3cd;
             border-color: #ffd700;
+            transform: scale(1.05);
         }
 
         .card.correct {
             background: #d4edda;
             border-color: #28a745;
+            animation: correctMatch 0.5s forwards;
         }
 
         .card.incorrect {
-            background: #f8d7da;
-            border-color: #dc3545;
+            animation: incorrectMatch 0.5s forwards;
+        }
+
+        @keyframes correctMatch {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        @keyframes incorrectMatch {
+            0% { background: #f8d7da; border-color: #dc3545; }
+            100% { background: white; border-color: #ddd; }
         }
 
         #resultsTable {
@@ -123,7 +143,7 @@
     <!-- Input Screen -->
     <div id="inputScreen" class="screen active">
         <h1>Vocabulary Matching Game</h1>
-        <textarea id="wordInput" placeholder="Paste word pairs here (e.g., apple, äpple&#10;house, hus)"></textarea>
+        <textarea id="wordInput" placeholder="Paste word pairs here (e.g., apple	äpple&#10;house	hus)"></textarea>
         
         <div class="timer-controls">
             <button id="decreaseTime">←</button>
@@ -184,7 +204,8 @@
             incorrectMatches: 0,
             timeLeft: 120,
             timerId: null,
-            stats: new Map()
+            stats: new Map(),
+            activePairs: new Set()
         };
 
         // DOM Elements
@@ -227,6 +248,7 @@
             gameState.selectedCards = [];
             gameState.correctMatches = 0;
             gameState.incorrectMatches = 0;
+            gameState.activePairs.clear();
             initializeGameBoard();
             startTimer();
         }
@@ -236,7 +258,7 @@
             gameState.pairs = [];
             gameState.stats.clear();
             for (const line of lines) {
-                const [english, swedish] = line.split(',').map(s => s.trim());
+                const [english, swedish] = line.split(/[\t,]/).map(s => s.trim());
                 if (english && swedish) {
                     gameState.pairs.push({ english, swedish });
                     gameState.stats.set(english, { correct: 0, incorrect: 0 });
@@ -252,6 +274,163 @@
         function initializeGameBoard() {
             englishColumn.innerHTML = '';
             swedishColumn.innerHTML = '';
-            const shuffledPairs = [...gameState.pairs].sort(() => Math.random() - 0.5);
-            gameState.englishWords = shuffledPairs.slice(0, 6).map(p => p.english);
-            gameState.swedishWords = shuffledPairs.slice
+            const allPairs = [...gameState.pairs];
+            while (gameState.activePairs.size < 6 && allPairs.length > 0) {
+                const index = Math.floor(Math.random() * allPairs.length);
+                const pair = allPairs.splice(index, 1)[0];
+                gameState.activePairs.add(pair);
+            }
+            
+            const activePairsArray = [...gameState.activePairs];
+            gameState.englishWords = activePairsArray.map(p => p.english);
+            gameState.swedishWords = activePairsArray.map(p => p.swedish).sort(() => Math.random() - 0.5);
+            
+            gameState.englishWords.forEach(word => createCard(word, 'english'));
+            gameState.swedishWords.forEach(word => createCard(word, 'swedish'));
+        }
+
+        function createCard(word, language) {
+            const column = language === 'english' ? englishColumn : swedishColumn;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.textContent = word;
+            card.dataset.language = language;
+            card.addEventListener('click', () => handleCardClick(card, language));
+            column.appendChild(card);
+        }
+
+        function handleCardClick(card, language) {
+            if (card.classList.contains('selected')) {
+                card.classList.remove('selected');
+                gameState.selectedCards = gameState.selectedCards.filter(c => c !== card);
+                return;
+            }
+
+            // Check if clicking in same column
+            const existingSelection = gameState.selectedCards.find(c => c.language === language);
+            if (existingSelection) {
+                existingSelection.card.classList.remove('selected');
+                gameState.selectedCards = gameState.selectedCards.filter(c => c !== existingSelection);
+            }
+
+            card.classList.add('selected');
+            gameState.selectedCards.push({ card, language });
+
+            if (gameState.selectedCards.length === 2) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [first, second] = gameState.selectedCards;
+            const englishWord = first.language === 'english' ? first.card.textContent : second.card.textContent;
+            const swedishWord = first.language === 'swedish' ? first.card.textContent : second.card.textContent;
+            
+            const pair = gameState.pairs.find(p => 
+                p.english === englishWord && 
+                p.swedish === swedishWord
+            );
+
+            pair ? handleCorrectMatch(first.card, second.card, pair) : handleIncorrectMatch(first.card, second.card);
+        }
+
+        function handleCorrectMatch(card1, card2, pair) {
+            card1.classList.add('correct');
+            card2.classList.add('correct');
+            
+            const stats = gameState.stats.get(pair.english);
+            stats.correct++;
+            gameState.correctMatches++;
+            
+            setTimeout(() => {
+                card1.remove();
+                card2.remove();
+                refillColumns();
+            }, 500);
+            
+            gameState.selectedCards = [];
+        }
+
+        function handleIncorrectMatch(card1, card2) {
+            card1.classList.add('incorrect');
+            card2.classList.add('incorrect');
+            
+            const englishWord = [card1, card2].find(c => c.dataset.language === 'english').textContent;
+            const stats = gameState.stats.get(englishWord);
+            stats.incorrect++;
+            gameState.incorrectMatches++;
+            
+            setTimeout(() => {
+                card1.classList.remove('incorrect');
+                card2.classList.remove('incorrect');
+                gameState.selectedCards = [];
+            }, 300);
+        }
+
+        function refillColumns() {
+            const visibleCards = {
+                english: englishColumn.children.length,
+                swedish: swedishColumn.children.length
+            };
+
+            // Always maintain at least 4 pairs (8 cards)
+            if (visibleCards.english + visibleCards.swedish >= 8) return;
+
+            // Recycle used pairs if needed
+            if (gameState.activePairs.size === 0) {
+                gameState.activePairs = new Set(gameState.pairs);
+            }
+
+            const newPairs = [...gameState.activePairs].sort(() => Math.random() - 0.5);
+            const neededPairs = Math.ceil((8 - (visibleCards.english + visibleCards.swedish)) / 2);
+
+            newPairs.slice(0, neededPairs).forEach(pair => {
+                if (englishColumn.children.length < 6) {
+                    createCard(pair.english, 'english');
+                }
+                if (swedishColumn.children.length < 6) {
+                    createCard(pair.swedish, 'swedish');
+                }
+                gameState.activePairs.delete(pair);
+            });
+        }
+
+        function startTimer() {
+            let timeLeft = gameState.timeLeft;
+            gameState.timerId = setInterval(() => {
+                timeLeft--;
+                gameTimer.textContent = `⏳ ${String(Math.floor(timeLeft / 60)).padStart(2, '0')}:${String(timeLeft % 60).padStart(2, '0')}`;
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(gameState.timerId);
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+            document.getElementById('totalCorrect').textContent = gameState.correctMatches;
+            document.getElementById('totalIncorrect').textContent = gameState.incorrectMatches;
+            const tbody = document.querySelector('#resultsTable tbody');
+            tbody.innerHTML = '';
+            gameState.stats.forEach((stats, englishWord) => {
+                const pair = gameState.pairs.find(p => p.english === englishWord);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${englishWord}</td>
+                    <td>${pair.swedish}</td>
+                    <td style="color: darkgreen">${stats.correct}</td>
+                    <td style="color: red">${stats.incorrect}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showInputScreen() {
+            inputScreen.classList.add('active');
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.remove('active');
+            clearInterval(gameState.timerId);
+        }
+    </script>
+</body>
+</html>
