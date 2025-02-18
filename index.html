@@ -1,644 +1,243 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Swedish Vocabulary Matching Game</title>
-  <!-- Load Lexend font -->
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;500;700&display=swap" rel="stylesheet">
-  <style>
-    /* Global Styles */
-    body {
-      font-family: 'Lexend', sans-serif;
-      background-color: #f7f7ff; /* soft pastel background */
-      margin: 20px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      color: #333;
-    }
-    h1 {
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-weight: 500;
-      margin: 10px 0;
-    }
-    h3 {
-      font-weight: 300;
-      margin: 10px 0 5px;
-    }
-    .hidden {
-      display: none;
-    }
+// JavaScript Code
+let gameState = {
+    pairs: [],
+    englishWords: [],
+    swedishWords: [],
+    selectedCards: [],
+    correctMatches: 0,
+    incorrectMatches: 0,
+    timeLeft: 120,
+    timerId: null,
+    stats: new Map()
+};
+
+// Input Screen Elements
+const inputScreen = document.getElementById('inputScreen');
+const wordInput = document.getElementById('wordInput');
+const startGameBtn = document.getElementById('startGame');
+const timeDisplay = document.getElementById('timeDisplay');
+
+// Game Screen Elements
+const gameScreen = document.getElementById('gameScreen');
+const englishColumn = document.getElementById('englishColumn');
+const swedishColumn = document.getElementById('swedishColumn');
+const gameTimer = document.getElementById('gameTimer');
+
+// Results Screen Elements
+const resultsScreen = document.getElementById('resultsScreen');
+
+// Timer Controls
+document.getElementById('increaseTime').addEventListener('click', () => adjustTime(1));
+document.getElementById('decreaseTime').addEventListener('click', () => adjustTime(-1));
+
+// Game Controls
+document.getElementById('backButton').addEventListener('click', showInputScreen);
+document.getElementById('finishButton').addEventListener('click', endGame);
+document.getElementById('replayButton').addEventListener('click', startGame);
+document.getElementById('newWordsButton').addEventListener('click', showInputScreen);
+
+// Input Validation
+wordInput.addEventListener('input', () => {
+    startGameBtn.disabled = !wordInput.value.trim();
+});
+
+// Start Game
+startGameBtn.addEventListener('click', startGame);
+
+function adjustTime(change) {
+    let [minutes, seconds] = timeDisplay.textContent.match(/\d+/g).map(Number);
+    let totalSeconds = minutes * 60 + seconds + change * 30;
     
-    /* Input Screen */
-    #inputSection {
-      text-align: center;
-    }
-    textarea {
-      width: 100%;
-      height: 200px;
-      font-size: 16px;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: #fff;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #a3c4f3; /* pastel blue */
-      color: white;
-      cursor: pointer;
-      margin: 5px;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .time-selector {
-      display: inline-flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .time-selector button {
-      font-size: 18px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin: 0 10px;
-    }
-    #timeDisplay {
-      font-size: 20px;
-      font-weight: 500;
-    }
+    totalSeconds = Math.max(30, Math.min(totalSeconds, 600));
     
-    /* Game Screen */
-    #gameHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    #gameHeader button {
-      padding: 5px 10px;
-      font-size: 14px;
-      border-radius: 4px;
-    }
-    #timerDisplay {
-      font-size: 24px;
-      font-weight: 500;
-    }
+    const newMinutes = Math.floor(totalSeconds / 60);
+    const newSeconds = totalSeconds % 60;
+    timeDisplay.textContent = `⏳ ${String(newMinutes).padStart(1, '0')}:${String(newSeconds).padStart(2, '0')}`;
+    gameState.timeLeft = totalSeconds;
+}
+
+function startGame() {
+    if (!parseInput()) return;
     
-    #gameBoard {
-      display: flex;
-      justify-content: space-between;
-    }
-    .column {
-      width: 45%;
-    }
-    /* Fixed board slots */
-    .slot {
-      height: 50px;
-      margin: 5px 0;
-      position: relative;
-      border: 1px dashed #ddd;
-      border-radius: 8px;
-      background-color: #fafafa;
-    }
-    .card {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: background-color 0.5s ease, opacity 0.5s ease;
-      font-size: 16px;
-      user-select: none;
-      background-color: #fff;
-      border: 1px solid #eee;
-    }
-    .card.selected {
-      background-color: #fffacd; /* pastel yellow */
-    }
-    .card.correct {
-      background-color: #c8e6c9; /* pastel green */
-    }
-    .card.wrong {
-      background-color: #ffcdd2; /* pastel red */
-    }
+    inputScreen.classList.remove('active');
+    gameScreen.classList.add('active');
+    resultsScreen.classList.remove('active');
     
-    /* Results Screen */
-    #resultsSection {
-      text-align: center;
-    }
-    #resultsTable {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    #resultsTable th, #resultsTable td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    #resultsTable th {
-      background-color: #f0f0f0;
-    }
-    .correct-count {
-      color: darkgreen;
-      font-weight: bold;
-    }
-    .mismatch-count {
-      color: darkred;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>Swedish Vocabulary Matching Game</h1>
-  
-  <!-- Input Screen -->
-  <div id="inputSection">
-    <h2>Enter Your Vocabulary</h2>
-    <p>
-      Paste your vocabulary data below.<br>
-      Use a tab or comma to separate the English and Swedish words (one pair per line).<br>
-      <em>Example:</em> Bread [tab] bröd<br> Dog [tab] hund<br> Computer [tab] dator
-    </p>
-    <textarea id="vocabInput" placeholder="Bread [tab] bröd&#10;Dog [tab] hund&#10;Computer [tab] dator&#10;House [tab] hus&#10;Cat [tab] katt&#10;Button [tab] knapp&#10;Lid [tab] lock&#10;Key [tab] nykel&#10;Socks [tab] strumpor&#10;Bag [tab] väska"></textarea>
+    gameState.selectedCards = [];
+    gameState.correctMatches = 0;
+    gameState.incorrectMatches = 0;
     
-    <!-- Time Selector -->
-    <div class="time-selector">
-      <button id="decreaseTime">←</button>
-      <span id="timeDisplay">02:00</span>
-      <button id="increaseTime">→</button>
-    </div>
-    <br>
-    <button id="startButton" disabled>Start Game</button>
-  </div>
-  
-  <!-- Game Screen -->
-  <div id="gameSection" class="hidden">
-    <div id="gameHeader">
-      <button id="backButton">← Back</button>
-      <div id="timerDisplay">00:00</div>
-      <button id="finishButton">Finish</button>
-    </div>
-    <div id="gameBoard">
-      <div id="englishColumn" class="column">
-        <h3>English</h3>
-      </div>
-      <div id="swedishColumn" class="column">
-        <h3>Swedish</h3>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Results Screen -->
-  <div id="resultsSection" class="hidden">
-    <h2>Results</h2>
-    <p id="totalsDisplay"></p>
-    <table id="resultsTable">
-      <thead>
-        <tr>
-          <th>English</th>
-          <th>Swedish</th>
-          <th>Correct Matches</th>
-          <th>Mismatches</th>
-        </tr>
-      </thead>
-      <tbody id="resultsBody"></tbody>
-    </table>
-    <br>
-    <button id="replayButton">Replay</button>
-    <button id="newWordsButton">New Words</button>
-  </div>
-  
-  <script>
-    /***********************
-     * Global Variables
-     ***********************/
-    let vocabularyPairs = [];     // All vocabulary pairs from input.
-    let remainingPairs = [];      // Pairs not yet placed on board.
-    let totalCorrectMatches = 0;  // Total number of correct matches.
-    let totalMismatches = 0;      // Total number of mismatches.
-    // Tracking counts for each pair id:
-    let pairStats = {};           // { id: { correct: number, mismatches: number, english: "", swedish: "" } }
-    
-    // Fixed board arrays (6 slots per column)
-    const totalSlots = 6;
-    let englishBoard = new Array(totalSlots).fill(null);
-    let swedishBoard = new Array(totalSlots).fill(null);
-    
-    // Currently selected card (object with properties: element, pairId, column, slot)
-    let selectedCard = null;
-    
-    // Timer variables
-    let timerInterval;
-    let timeLeft = 120;   // in seconds (default 2 minutes)
-    
-    // For storing original vocabulary for replay.
-    let originalVocabulary = [];
-    
-    /***********************
-     * DOM Elements
-     ***********************/
-    const vocabInput = document.getElementById('vocabInput');
-    const startButton = document.getElementById('startButton');
-    const inputSection = document.getElementById('inputSection');
-    const gameSection = document.getElementById('gameSection');
-    const englishColumn = document.getElementById('englishColumn');
-    const swedishColumn = document.getElementById('swedishColumn');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const backButton = document.getElementById('backButton');
-    const finishButton = document.getElementById('finishButton');
-    const resultsSection = document.getElementById('resultsSection');
-    const totalsDisplay = document.getElementById('totalsDisplay');
-    const resultsBody = document.getElementById('resultsBody');
-    const replayButton = document.getElementById('replayButton');
-    const newWordsButton = document.getElementById('newWordsButton');
-    const decreaseTimeBtn = document.getElementById('decreaseTime');
-    const increaseTimeBtn = document.getElementById('increaseTime');
-    const timeDisplay = document.getElementById('timeDisplay');
-    
-    /***********************
-     * Input Screen Logic
-     ***********************/
-    // Enable Start Game button if there is any text.
-    vocabInput.addEventListener('input', () => {
-      startButton.disabled = vocabInput.value.trim().length === 0;
-    });
-    
-    // Timer selection logic
-    let selectedTime = 120; // default in seconds (2 minutes)
-    const MIN_TIME = 30;    // 30 seconds
-    const MAX_TIME = 600;   // 10 minutes
-    
-    function updateTimeDisplay() {
-      const m = Math.floor(selectedTime / 60);
-      const s = selectedTime % 60;
-      timeDisplay.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    }
-    updateTimeDisplay();
-    
-    decreaseTimeBtn.addEventListener('click', () => {
-      if (selectedTime > MIN_TIME) {
-        if (selectedTime === 120) {
-          selectedTime = 60;
-        } else if (selectedTime === 60) {
-          selectedTime = 30;
-        } else {
-          selectedTime = Math.max(selectedTime - 60, MIN_TIME);
+    initializeGameBoard();
+    startTimer();
+}
+
+function parseInput() {
+    const lines = wordInput.value.trim().split('\n');
+    gameState.pairs = [];
+    gameState.stats.clear();
+
+    for (const line of lines) {
+        const [english, swedish] = line.split(',').map(s => s.trim());
+        if (english && swedish) {
+            gameState.pairs.push({ english, swedish });
+            gameState.stats.set(english, { correct: 0, incorrect: 0 });
         }
-        updateTimeDisplay();
-      }
-    });
-    
-    increaseTimeBtn.addEventListener('click', () => {
-      if (selectedTime < MAX_TIME) {
-        selectedTime = Math.min(selectedTime + 60, MAX_TIME);
-        updateTimeDisplay();
-      }
-    });
-    
-    // Start Game button event
-    startButton.addEventListener('click', () => {
-      parseVocabulary();
-      if (vocabularyPairs.length === 0) {
-        alert("No valid vocabulary pairs found. Please check your input.");
-        return;
-      }
-      // Save a copy for replay.
-      originalVocabulary = JSON.parse(JSON.stringify(vocabularyPairs));
-      initializePairStats();
-      resetGameState();
-      // Set game timer from selectedTime.
-      timeLeft = selectedTime;
-      // Hide input screen, show game.
-      inputSection.classList.add('hidden');
-      resultsSection.classList.add('hidden');
-      gameSection.classList.remove('hidden');
-      renderFixedSlots();
-      fillAllEmptySlots();
-      startTimer();
-    });
-    
-    // Parse vocabulary input (each line: English [tab/comma] Swedish)
-    function parseVocabulary() {
-      vocabularyPairs = [];
-      const lines = vocabInput.value.trim().split('\n');
-      let id = 0;
-      lines.forEach(line => {
-        const parts = line.split(/\t|,/);
-        if (parts.length >= 2) {
-          const english = parts[0].trim();
-          const swedish = parts[1].trim();
-          if (english && swedish) {
-            const pair = { id: id, english: english, swedish: swedish };
-            vocabularyPairs.push(pair);
-            id++;
-          }
-        }
-      });
-      // Initialize the remaining pool.
-      remainingPairs = vocabularyPairs.slice();
     }
     
-    // Initialize pairStats for each vocabulary pair.
-    function initializePairStats() {
-      pairStats = {};
-      vocabularyPairs.forEach(pair => {
-        pairStats[pair.id] = { correct: 0, mismatches: 0, english: pair.english, swedish: pair.swedish };
-      });
-      totalCorrectMatches = 0;
-      totalMismatches = 0;
+    if (gameState.pairs.length < 6) {
+        alert('Please enter at least 6 word pairs');
+        return false;
     }
     
-    // Reset boards and selection.
-    function resetGameState() {
-      englishBoard = new Array(totalSlots).fill(null);
-      swedishBoard = new Array(totalSlots).fill(null);
-      selectedCard = null;
-    }
+    return true;
+}
+
+function initializeGameBoard() {
+    englishColumn.innerHTML = '';
+    swedishColumn.innerHTML = '';
     
-    /***********************
-     * Game Screen Logic
-     ***********************/
-    // Render fixed slots in each column.
-    function renderFixedSlots() {
-      englishColumn.innerHTML = '<h3>English</h3>';
-      swedishColumn.innerHTML = '<h3>Swedish</h3>';
-      for (let i = 0; i < totalSlots; i++) {
-        const engSlot = document.createElement('div');
-        engSlot.className = 'slot';
-        engSlot.dataset.slot = i;
-        englishColumn.appendChild(engSlot);
-        
-        const sweSlot = document.createElement('div');
-        sweSlot.className = 'slot';
-        sweSlot.dataset.slot = i;
-        swedishColumn.appendChild(sweSlot);
-      }
-    }
+    const shuffledPairs = [...gameState.pairs].sort(() => Math.random() - 0.5);
+    gameState.englishWords = shuffledPairs.slice(0, 6).map(p => p.english);
+    gameState.swedishWords = shuffledPairs.slice(0, 6).map(p => p.swedish).sort(() => Math.random() - 0.5);
+
+    gameState.englishWords.forEach(word => createCard(word, 'english'));
+    gameState.swedishWords.forEach(word => createCard(word, 'swedish'));
+}
+
+function createCard(word, language) {
+    const column = language === 'english' ? englishColumn : swedishColumn;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = word;
     
-    // Fill ALL empty slots (used at game start)
-    function fillAllEmptySlots() {
-      for (let i = 0; i < totalSlots; i++) {
-        if (!englishBoard[i] && remainingPairs.length > 0) {
-          englishBoard[i] = drawRandomPair();
-        }
-        if (!swedishBoard[i] && remainingPairs.length > 0) {
-          swedishBoard[i] = drawRandomPair();
-        }
-      }
-      renderBoard();
-    }
-    
-    // Fill empty slots independently (after a correct match removal)
-    function fillEmptySlotsIndependently() {
-      for (let i = 0; i < totalSlots; i++) {
-        if (!englishBoard[i] && remainingPairs.length > 0) {
-          englishBoard[i] = drawRandomPair();
-        }
-        if (!swedishBoard[i] && remainingPairs.length > 0) {
-          swedishBoard[i] = drawRandomPair();
-        }
-      }
-      renderBoard();
-    }
-    
-    // Draw a random pair from remainingPairs and remove it from the pool.
-    function drawRandomPair() {
-      if (remainingPairs.length === 0) return null;
-      const index = Math.floor(Math.random() * remainingPairs.length);
-      return remainingPairs.splice(index, 1)[0];
-    }
-    
-    // Render board: update each fixed slot with its card.
-    function renderBoard() {
-      const engSlots = englishColumn.querySelectorAll('.slot');
-      engSlots.forEach((slotEl, index) => {
-        slotEl.innerHTML = ''; // clear slot
-        if (englishBoard[index]) {
-          const card = createCardElement(englishBoard[index].english, englishBoard[index].id, 'english', index);
-          slotEl.appendChild(card);
-        }
-      });
-      const sweSlots = swedishColumn.querySelectorAll('.slot');
-      sweSlots.forEach((slotEl, index) => {
-        slotEl.innerHTML = '';
-        if (swedishBoard[index]) {
-          const card = createCardElement(swedishBoard[index].swedish, swedishBoard[index].id, 'swedish', index);
-          slotEl.appendChild(card);
-        }
-      });
-    }
-    
-    // Create a card element.
-    function createCardElement(text, pairId, column, slot) {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.textContent = text;
-      card.dataset.pairId = pairId;
-      card.dataset.column = column;
-      card.dataset.slot = slot;
-      card.addEventListener('click', handleCardClick);
-      return card;
-    }
-    
-    // Card click handler.
-    function handleCardClick(e) {
-      const card = e.currentTarget;
-      // If already selected, deselect.
-      if (card.classList.contains('selected')) {
+    card.addEventListener('click', () => handleCardClick(card, language));
+    column.appendChild(card);
+}
+
+function handleCardClick(card, language) {
+    if (card.classList.contains('selected')) {
         card.classList.remove('selected');
-        if (selectedCard && selectedCard.element === card) {
-          selectedCard = null;
-        }
-        return;
-      }
-      
-      // If no card selected yet, select this card.
-      if (!selectedCard) {
+        gameState.selectedCards = gameState.selectedCards.filter(c => c !== card);
+    } else {
+        if (gameState.selectedCards.length === 2) return;
         card.classList.add('selected');
-        selectedCard = {
-          element: card,
-          pairId: card.dataset.pairId,
-          column: card.dataset.column,
-          slot: card.dataset.slot
-        };
-      } else {
-        // If card from same column, change selection.
-        if (card.dataset.column === selectedCard.column) {
-          selectedCard.element.classList.remove('selected');
-          card.classList.add('selected');
-          selectedCard = {
-            element: card,
-            pairId: card.dataset.pairId,
-            column: card.dataset.column,
-            slot: card.dataset.slot
-          };
-          return;
-        }
-        // Now, card is from opposite column.
-        card.classList.add('selected');
-        // Check if the two selected cards belong to the same pair.
-        if (card.dataset.pairId === selectedCard.pairId) {
-          // Correct match.
-          card.classList.remove('selected');
-          card.classList.add('correct');
-          selectedCard.element.classList.remove('selected');
-          selectedCard.element.classList.add('correct');
-          
-          const pid = card.dataset.pairId;
-          pairStats[pid].correct++;
-          totalCorrectMatches++;
-          
-          // After a short flash (600ms), remove the matched cards.
-          setTimeout(() => {
-            removeMatchedPair(pid);
-            // Determine delay: if many slots are empty, use a shorter delay.
-            const totalEmpty = countTotalEmptySlots();
-            const delay = (totalEmpty === totalSlots * 2 ? 500 : 2000);
-            setTimeout(fillEmptySlotsIndependently, delay);
-          }, 600);
-          
-          selectedCard = null;
-        } else {
-          // Incorrect match: flash red.
-          const pid1 = selectedCard.pairId;
-          const pid2 = card.dataset.pairId;
-          pairStats[pid1].mismatches++;
-          pairStats[pid2].mismatches++;
-          totalMismatches += 2;
-          card.classList.add('wrong');
-          selectedCard.element.classList.add('wrong');
-          setTimeout(() => {
-            card.classList.remove('wrong');
-            selectedCard.element.classList.remove('wrong');
-            card.classList.remove('selected');
-            selectedCard.element.classList.remove('selected');
-          }, 600);
-          selectedCard = null;
-        }
-      }
+        gameState.selectedCards.push({ card, language });
     }
-    
-    // Remove matched pair from the board arrays.
-    function removeMatchedPair(pairId) {
-      for (let i = 0; i < totalSlots; i++) {
-        if (englishBoard[i] && englishBoard[i].id == pairId) {
-          englishBoard[i] = null;
-        }
-        if (swedishBoard[i] && swedishBoard[i].id == pairId) {
-          swedishBoard[i] = null;
-        }
-      }
-      renderBoard();
+
+    if (gameState.selectedCards.length === 2) {
+        checkMatch();
     }
+}
+
+function checkMatch() {
+    const [first, second] = gameState.selectedCards;
+    const englishWord = first.language === 'english' ? first.card.textContent : second.card.textContent;
+    const swedishWord = first.language === 'swedish' ? first.card.textContent : second.card.textContent;
     
-    // Count total empty slots in both columns.
-    function countTotalEmptySlots() {
-      let emptyCount = 0;
-      for (let i = 0; i < totalSlots; i++) {
-        if (!englishBoard[i]) emptyCount++;
-        if (!swedishBoard[i]) emptyCount++;
-      }
-      return emptyCount;
+    const pair = gameState.pairs.find(p => p.english === englishWord && p.swedish === swedishWord);
+    
+    if (pair) {
+        handleCorrectMatch(first.card, second.card, pair.english);
+    } else {
+        handleIncorrectMatch(first.card, second.card);
     }
+}
+
+function handleCorrectMatch(card1, card2, englishWord) {
+    card1.classList.add('correct');
+    card2.classList.add('correct');
     
-    // Timer functions.
-    function startTimer() {
-      updateTimerDisplay();
-      timerInterval = setInterval(() => {
+    const stats = gameState.stats.get(englishWord);
+    stats.correct++;
+    gameState.correctMatches++;
+    
+    setTimeout(() => {
+        card1.remove();
+        card2.remove();
+        refillColumns();
+    }, 1000);
+    
+    gameState.selectedCards = [];
+}
+
+function handleIncorrectMatch(card1, card2) {
+    card1.classList.add('incorrect');
+    card2.classList.add('incorrect');
+    
+    const englishWord = [card1, card2].find(c => c.parentElement === englishColumn).textContent;
+    const stats = gameState.stats.get(englishWord);
+    stats.incorrect++;
+    gameState.incorrectMatches++;
+    
+    setTimeout(() => {
+        card1.classList.remove('selected', 'incorrect');
+        card2.classList.remove('selected', 'incorrect');
+        gameState.selectedCards = [];
+    }, 1000);
+}
+
+function refillColumns() {
+    setTimeout(() => {
+        const missingEnglish = 6 - englishColumn.children.length;
+        const missingSwedish = 6 - swedishColumn.children.length;
+        
+        const newPairs = [...gameState.pairs]
+            .filter(p => !gameState.englishWords.includes(p.english))
+            .sort(() => Math.random() - 0.5)
+            .slice(0, Math.max(missingEnglish, missingSwedish));
+        
+        newPairs.forEach(pair => {
+            if (englishColumn.children.length < 6) {
+                createCard(pair.english, 'english');
+                gameState.englishWords.push(pair.english);
+            }
+            if (swedishColumn.children.length < 6) {
+                createCard(pair.swedish, 'swedish');
+                gameState.swedishWords.push(pair.swedish);
+            }
+        });
+    }, 500);
+}
+
+function startTimer() {
+    let timeLeft = gameState.timeLeft;
+    gameState.timerId = setInterval(() => {
         timeLeft--;
-        updateTimerDisplay();
+        gameTimer.textContent = `⏳ ${String(Math.floor(timeLeft / 60)).padStart(2, '0')}:${String(timeLeft % 60).padStart(2, '0')}`;
+        
         if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          endGame();
+            endGame();
         }
-      }, 1000);
-    }
+    }, 1000);
+}
+
+function endGame() {
+    clearInterval(gameState.timerId);
+    gameScreen.classList.remove('active');
+    resultsScreen.classList.add('active');
     
-    function updateTimerDisplay() {
-      const m = Math.floor(timeLeft / 60);
-      const s = timeLeft % 60;
-      timerDisplay.textContent = (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
-    }
+    document.getElementById('totalCorrect').textContent = gameState.correctMatches;
+    document.getElementById('totalIncorrect').textContent = gameState.incorrectMatches;
     
-    // Back and Finish buttons.
-    backButton.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      gameSection.classList.add('hidden');
-      resultsSection.classList.add('hidden');
-      inputSection.classList.remove('hidden');
-    });
+    const tbody = document.querySelector('#resultsTable tbody');
+    tbody.innerHTML = '';
     
-    finishButton.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      endGame();
-    });
-    
-    /***********************
-     * End Game & Results
-     ***********************/
-    function endGame() {
-      // Disable further clicks.
-      const cards = document.querySelectorAll('.card');
-      cards.forEach(card => {
-        card.removeEventListener('click', handleCardClick);
-      });
-      gameSection.classList.add('hidden');
-      displayResults();
-      resultsSection.classList.remove('hidden');
-    }
-    
-    function displayResults() {
-      totalsDisplay.innerHTML = `<strong>Total Correct Matches:</strong> ${totalCorrectMatches} &nbsp;&nbsp; <strong>Total Mismatches:</strong> ${totalMismatches}`;
-      resultsBody.innerHTML = '';
-      vocabularyPairs.forEach(pair => {
-        const stats = pairStats[pair.id];
+    gameState.stats.forEach((stats, englishWord) => {
+        const pair = gameState.pairs.find(p => p.english === englishWord);
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${pair.english}</td>
-                         <td>${pair.swedish}</td>
-                         <td class="correct-count">${stats.correct}</td>
-                         <td class="mismatch-count">${stats.mismatches}</td>`;
-        resultsBody.appendChild(row);
-      });
-    }
-    
-    // Replay button: restart game with same words and timer.
-    replayButton.addEventListener('click', () => {
-      vocabularyPairs = JSON.parse(JSON.stringify(originalVocabulary));
-      remainingPairs = vocabularyPairs.slice();
-      initializePairStats();
-      resetGameState();
-      timeLeft = selectedTime;
-      resultsSection.classList.add('hidden');
-      gameSection.classList.remove('hidden');
-      renderBoard();
-      fillAllEmptySlots();
-      startTimer();
+        row.innerHTML = `
+            <td>${englishWord}</td>
+            <td>${pair.swedish}</td>
+            <td style="color: darkgreen">${stats.correct}</td>
+            <td style="color: red">${stats.incorrect}</td>
+        `;
+        tbody.appendChild(row);
     });
-    
-    // New Words button: return to input screen.
-    newWordsButton.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      resultsSection.classList.add('hidden');
-      inputSection.classList.remove('hidden');
-    });
-  </script>
-</body>
-</html>
+}
+
+function showInputScreen() {
+    inputScreen.classList.add('active');
+    gameScreen.classList.remove('active');
+    resultsScreen.classList.remove('active');
+    clearInterval(gameState.timerId);
+}
