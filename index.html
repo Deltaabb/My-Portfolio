@@ -6,7 +6,7 @@
     <title>Swedish Vocabulary Matching Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Add spreadsheet grid styles */
+        /* Spreadsheet Grid Styles */
         .input-grid {
             width: 80%;
             margin: 20px auto;
@@ -28,10 +28,6 @@
             grid-template-columns: 50px 1fr 1fr;
             padding: 10px;
             border-bottom: 1px solid #eee;
-        }
-
-        .grid-row:last-child {
-            border-bottom: none;
         }
 
         .row-number {
@@ -63,7 +59,7 @@
             border-top: 2px solid #ddd;
         }
 
-        /* Keep existing styles */
+        /* Existing Game Styles */
         body {
             font-family: 'Lexend', sans-serif;
             background-color: #f7f7ff;
@@ -101,7 +97,93 @@
             transition: all 0.2s;
         }
 
-        /* ... (keep all other existing styles) ... */
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .game-board {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .column {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 15px;
+            width: 300px;
+        }
+
+        .slot {
+            min-height: 60px;
+            position: relative;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card.selected {
+            background: #fff3cd;
+            border-color: #ffd700;
+            transform: scale(1.05);
+        }
+
+        .card.correct {
+            animation: correctMatch 0.5s forwards;
+        }
+
+        .card.incorrect {
+            animation: incorrectMatch 0.3s;
+        }
+
+        @keyframes correctMatch {
+            to { opacity: 0; transform: scale(0.9); }
+        }
+
+        @keyframes incorrectMatch {
+            50% { background: #f8d7da; border-color: #dc3545; }
+        }
+
+        #resultsTable {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        #resultsTable th, #resultsTable td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -128,10 +210,54 @@
         <button id="startGame" disabled>Start Game</button>
     </div>
 
-    <!-- Keep existing Game Screen and Results Screen HTML -->
+    <!-- Game Screen -->
+    <div id="gameScreen" class="screen">
+        <div class="game-header">
+            <button id="backButton" class="control-btn">🔙</button>
+            <div id="gameTimer">⏳ 02:00</div>
+            <button id="finishButton" class="control-btn">🔚</button>
+        </div>
+        
+        <div class="game-board">
+            <div class="column" id="englishColumn">
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+            </div>
+            <div class="column" id="swedishColumn">
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="screen">
+        <h2>Game Results</h2>
+        <div id="scoreSummary">
+            <p>Total Correct Matches: 🟢 <span id="totalCorrect">0</span></p>
+            <p>Total Mismatches: 🔴 <span id="totalIncorrect">0</span></p>
+        </div>
+        
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>English Word</th>
+                    <th>Swedish Word</th>
+                    <th>✅ Correct</th>
+                    <th>❌ Mismatches</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+        <div class="result-buttons">
+            <button id="replayButton">🔄 Replay</button>
+            <button id="newWordsButton">✏️ New Words</button>
+        </div>
+    </div>
 
     <script>
-        // Initialize grid with 15 rows
+        // Initialize input grid
         const gridBody = document.getElementById('gridBody');
         let rowCount = 15;
 
@@ -161,7 +287,6 @@
                 const [english, swedish] = rowData.split('\t').map(d => d.trim());
                 
                 if (index >= rows.length) {
-                    // Add new row if needed
                     const newRow = createInputRow(rows.length);
                     gridBody.appendChild(newRow);
                     rows.push(newRow);
@@ -172,13 +297,87 @@
                 inputs[1].value = swedish || '';
             });
 
-            // Update row numbers
+            // Update row numbers and button state
+            updateRowNumbers();
+            checkInputValidity();
+        });
+
+        // Input validation
+        function checkInputValidity() {
+            const validPairs = Array.from(gridBody.querySelectorAll('.grid-row'))
+                .filter(row => {
+                    const inputs = row.querySelectorAll('input');
+                    return inputs[0].value.trim() && inputs[1].value.trim();
+                }).length;
+
+            startGameBtn.disabled = validPairs < 6;
+        }
+
+        // Update row numbers
+        function updateRowNumbers() {
             Array.from(gridBody.querySelectorAll('.grid-row')).forEach((row, i) => {
                 row.querySelector('.row-number').textContent = i + 1;
             });
+        }
+
+        // Game State
+        let gameState = {
+            pairs: [],
+            slots: {
+                english: Array.from(document.querySelectorAll('#englishColumn .slot')),
+                swedish: Array.from(document.querySelectorAll('#swedishColumn .slot'))
+            },
+            activeCards: new Map(),
+            selectedCards: [],
+            correctMatches: 0,
+            incorrectMatches: 0,
+            timeLeft: 120,
+            timerId: null,
+            stats: new Map(),
+            availablePairs: []
+        };
+
+        // DOM Elements
+        const inputScreen = document.getElementById('inputScreen');
+        const startGameBtn = document.getElementById('startGame');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const gameTimer = document.getElementById('gameTimer');
+        const resultsScreen = document.getElementById('resultsScreen');
+
+        // Event Listeners
+        document.getElementById('increaseTime').addEventListener('click', () => adjustTime(1));
+        document.getElementById('decreaseTime').addEventListener('click', () => adjustTime(-1));
+        document.getElementById('backButton').addEventListener('click', showInputScreen);
+        document.getElementById('finishButton').addEventListener('click', endGame);
+        document.getElementById('replayButton').addEventListener('click', startGame);
+        document.getElementById('newWordsButton').addEventListener('click', showInputScreen);
+        startGameBtn.addEventListener('click', startGame);
+
+        // Input monitoring
+        gridBody.addEventListener('input', () => {
+            checkInputValidity();
         });
 
-        // Modified parseInput function
+        function adjustTime(change) {
+            let [minutes, seconds] = timeDisplay.textContent.match(/\d+/g).map(Number);
+            let totalSeconds = minutes * 60 + seconds + change * 30;
+            totalSeconds = Math.max(30, Math.min(totalSeconds, 600));
+            const newMinutes = Math.floor(totalSeconds / 60);
+            const newSeconds = totalSeconds % 60;
+            timeDisplay.textContent = `⏳ ${String(newMinutes).padStart(1, '0')}:${String(newSeconds).padStart(2, '0')}`;
+            gameState.timeLeft = totalSeconds;
+        }
+
+        function startGame() {
+            if (!parseInput()) return;
+            inputScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            resultsScreen.classList.remove('active');
+            resetGameState();
+            initializeGameBoard();
+            startTimer();
+        }
+
         function parseInput() {
             const rows = Array.from(gridBody.querySelectorAll('.grid-row'));
             gameState.pairs = [];
@@ -204,8 +403,9 @@
             return true;
         }
 
-        // Keep all other existing JavaScript code
-        // ...
+        // Rest of game logic remains the same as previous working version
+        // [Include all the game logic functions from the previous working version]
+        // ... (The remaining JavaScript code from the previous working version) ...
     </script>
 </body>
 </html>
