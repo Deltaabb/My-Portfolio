@@ -6,7 +6,6 @@
     <title>Swedish Vocabulary Matching Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Updated CSS with faster animations */
         body {
             font-family: 'Lexend', sans-serif;
             background-color: #f7f7ff;
@@ -73,20 +72,29 @@
         }
 
         .column {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
             gap: 15px;
             width: 300px;
         }
 
+        .slot {
+            min-height: 60px;
+            position: relative;
+        }
+
         .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: white;
             border: 2px solid #ddd;
-            padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            opacity: 1;
             animation: fadeIn 0.3s ease-in;
         }
 
@@ -102,24 +110,19 @@
         }
 
         .card.correct {
-            background: #d4edda;
-            border-color: #28a745;
             animation: correctMatch 0.5s forwards;
         }
 
         .card.incorrect {
-            animation: incorrectMatch 0.5s forwards;
+            animation: incorrectMatch 0.3s;
         }
 
         @keyframes correctMatch {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { opacity: 0; transform: scale(0.5); }
+            to { opacity: 0; transform: scale(0.9); }
         }
 
         @keyframes incorrectMatch {
-            0% { background: #f8d7da; border-color: #dc3545; }
-            100% { background: white; border-color: #ddd; }
+            50% { background: #f8d7da; border-color: #dc3545; }
         }
 
         #resultsTable {
@@ -143,7 +146,7 @@
     <!-- Input Screen -->
     <div id="inputScreen" class="screen active">
         <h1>Vocabulary Matching Game</h1>
-        <textarea id="wordInput" placeholder="Paste word pairs here (e.g., apple	äpple&#10;house	hus)"></textarea>
+        <textarea id="wordInput" placeholder="Paste word pairs (e.g., apple	äpple&#10;house	hus)"></textarea>
         
         <div class="timer-controls">
             <button id="decreaseTime">←</button>
@@ -163,8 +166,14 @@
         </div>
         
         <div class="game-board">
-            <div class="column" id="englishColumn"></div>
-            <div class="column" id="swedishColumn"></div>
+            <div class="column" id="englishColumn">
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+            </div>
+            <div class="column" id="swedishColumn">
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+                <div class="slot"></div><div class="slot"></div><div class="slot"></div>
+            </div>
         </div>
     </div>
 
@@ -197,15 +206,18 @@
     <script>
         let gameState = {
             pairs: [],
-            englishWords: [],
-            swedishWords: [],
+            slots: {
+                english: Array.from(document.querySelectorAll('#englishColumn .slot')),
+                swedish: Array.from(document.querySelectorAll('#swedishColumn .slot'))
+            },
+            activeCards: new Map(),
             selectedCards: [],
             correctMatches: 0,
             incorrectMatches: 0,
             timeLeft: 120,
             timerId: null,
             stats: new Map(),
-            activePairs: new Set()
+            availablePairs: []
         };
 
         // DOM Elements
@@ -214,8 +226,6 @@
         const startGameBtn = document.getElementById('startGame');
         const timeDisplay = document.getElementById('timeDisplay');
         const gameTimer = document.getElementById('gameTimer');
-        const englishColumn = document.getElementById('englishColumn');
-        const swedishColumn = document.getElementById('swedishColumn');
         const resultsScreen = document.getElementById('resultsScreen');
 
         // Event Listeners
@@ -245,10 +255,7 @@
             inputScreen.classList.remove('active');
             gameScreen.classList.add('active');
             resultsScreen.classList.remove('active');
-            gameState.selectedCards = [];
-            gameState.correctMatches = 0;
-            gameState.incorrectMatches = 0;
-            gameState.activePairs.clear();
+            resetGameState();
             initializeGameBoard();
             startTimer();
         }
@@ -257,6 +264,7 @@
             const lines = wordInput.value.trim().split('\n');
             gameState.pairs = [];
             gameState.stats.clear();
+            
             for (const line of lines) {
                 const [english, swedish] = line.split(/[\t,]/).map(s => s.trim());
                 if (english && swedish) {
@@ -264,39 +272,55 @@
                     gameState.stats.set(english, { correct: 0, incorrect: 0 });
                 }
             }
+            
             if (gameState.pairs.length < 6) {
                 alert('Please enter at least 6 word pairs');
                 return false;
             }
+            
+            gameState.availablePairs = [...gameState.pairs];
             return true;
         }
 
-        function initializeGameBoard() {
-            englishColumn.innerHTML = '';
-            swedishColumn.innerHTML = '';
-            const allPairs = [...gameState.pairs];
-            while (gameState.activePairs.size < 6 && allPairs.length > 0) {
-                const index = Math.floor(Math.random() * allPairs.length);
-                const pair = allPairs.splice(index, 1)[0];
-                gameState.activePairs.add(pair);
-            }
-            
-            const activePairsArray = [...gameState.activePairs];
-            gameState.englishWords = activePairsArray.map(p => p.english);
-            gameState.swedishWords = activePairsArray.map(p => p.swedish).sort(() => Math.random() - 0.5);
-            
-            gameState.englishWords.forEach(word => createCard(word, 'english'));
-            gameState.swedishWords.forEach(word => createCard(word, 'swedish'));
+        function resetGameState() {
+            gameState.selectedCards = [];
+            gameState.correctMatches = 0;
+            gameState.incorrectMatches = 0;
+            gameState.activeCards.clear();
+            gameState.slots.english.forEach(slot => slot.innerHTML = '');
+            gameState.slots.swedish.forEach(slot => slot.innerHTML = '');
         }
 
-        function createCard(word, language) {
-            const column = language === 'english' ? englishColumn : swedishColumn;
+        function initializeGameBoard() {
+            // Fill English slots
+            gameState.slots.english.forEach((slot, index) => {
+                const pair = getNextPair();
+                if (pair) createCard(pair.english, 'english', slot, pair);
+            });
+
+            // Fill Swedish slots with shuffled pairs
+            shuffle(gameState.availablePairs);
+            gameState.slots.swedish.forEach((slot, index) => {
+                const pair = getNextPair();
+                if (pair) createCard(pair.swedish, 'swedish', slot, pair);
+            });
+        }
+
+        function createCard(text, language, slot, pair) {
             const card = document.createElement('div');
             card.className = 'card';
-            card.textContent = word;
-            card.dataset.language = language;
+            card.textContent = text;
+            card.dataset.id = Date.now() + Math.random();
             card.addEventListener('click', () => handleCardClick(card, language));
-            column.appendChild(card);
+            
+            gameState.activeCards.set(card.dataset.id, {
+                slot,
+                pair,
+                language
+            });
+            
+            slot.appendChild(card);
+            return card;
         }
 
         function handleCardClick(card, language) {
@@ -306,15 +330,19 @@
                 return;
             }
 
-            // Check if clicking in same column
-            const existingSelection = gameState.selectedCards.find(c => c.language === language);
-            if (existingSelection) {
-                existingSelection.card.classList.remove('selected');
-                gameState.selectedCards = gameState.selectedCards.filter(c => c !== existingSelection);
+            // Check for existing selection in same column
+            const existing = gameState.selectedCards.find(c => {
+                const cardData = gameState.activeCards.get(c.dataset.id);
+                return cardData.language === language;
+            });
+
+            if (existing) {
+                existing.classList.remove('selected');
+                gameState.selectedCards = gameState.selectedCards.filter(c => c !== existing);
             }
 
             card.classList.add('selected');
-            gameState.selectedCards.push({ card, language });
+            gameState.selectedCards.push(card);
 
             if (gameState.selectedCards.length === 2) {
                 checkMatch();
@@ -322,77 +350,76 @@
         }
 
         function checkMatch() {
-            const [first, second] = gameState.selectedCards;
-            const englishWord = first.language === 'english' ? first.card.textContent : second.card.textContent;
-            const swedishWord = first.language === 'swedish' ? first.card.textContent : second.card.textContent;
-            
-            const pair = gameState.pairs.find(p => 
-                p.english === englishWord && 
-                p.swedish === swedishWord
-            );
+            const [card1, card2] = gameState.selectedCards;
+            const data1 = gameState.activeCards.get(card1.dataset.id);
+            const data2 = gameState.activeCards.get(card2.dataset.id);
 
-            pair ? handleCorrectMatch(first.card, second.card, pair) : handleIncorrectMatch(first.card, second.card);
+            if (data1.pair === data2.pair) {
+                handleCorrectMatch(card1, card2, data1.pair);
+            } else {
+                handleIncorrectMatch(card1, card2);
+            }
         }
 
         function handleCorrectMatch(card1, card2, pair) {
-            card1.classList.add('correct');
-            card2.classList.add('correct');
-            
             const stats = gameState.stats.get(pair.english);
             stats.correct++;
             gameState.correctMatches++;
             
+            card1.classList.add('correct');
+            card2.classList.add('correct');
+
             setTimeout(() => {
-                card1.remove();
-                card2.remove();
-                refillColumns();
+                replaceCard(card1);
+                replaceCard(card2);
             }, 500);
-            
+
             gameState.selectedCards = [];
         }
 
         function handleIncorrectMatch(card1, card2) {
-            card1.classList.add('incorrect');
-            card2.classList.add('incorrect');
-            
-            const englishWord = [card1, card2].find(c => c.dataset.language === 'english').textContent;
-            const stats = gameState.stats.get(englishWord);
+            const englishCard = [card1, card2].find(c => 
+                gameState.activeCards.get(c.dataset.id).language === 'english'
+            );
+            const stats = gameState.stats.get(englishCard.textContent);
             stats.incorrect++;
             gameState.incorrectMatches++;
-            
+
+            card1.classList.add('incorrect');
+            card2.classList.add('incorrect');
+
             setTimeout(() => {
-                card1.classList.remove('incorrect');
-                card2.classList.remove('incorrect');
+                card1.classList.remove('incorrect', 'selected');
+                card2.classList.remove('incorrect', 'selected');
                 gameState.selectedCards = [];
             }, 300);
         }
 
-        function refillColumns() {
-            const visibleCards = {
-                english: englishColumn.children.length,
-                swedish: swedishColumn.children.length
-            };
+        function replaceCard(oldCard) {
+            const oldData = gameState.activeCards.get(oldCard.dataset.id);
+            oldData.slot.innerHTML = '';
+            gameState.activeCards.delete(oldCard.dataset.id);
 
-            // Always maintain at least 4 pairs (8 cards)
-            if (visibleCards.english + visibleCards.swedish >= 8) return;
-
-            // Recycle used pairs if needed
-            if (gameState.activePairs.size === 0) {
-                gameState.activePairs = new Set(gameState.pairs);
+            const newPair = getNextPair();
+            if (newPair) {
+                const text = oldData.language === 'english' ? newPair.english : newPair.swedish;
+                createCard(text, oldData.language, oldData.slot, newPair);
             }
+        }
 
-            const newPairs = [...gameState.activePairs].sort(() => Math.random() - 0.5);
-            const neededPairs = Math.ceil((8 - (visibleCards.english + visibleCards.swedish)) / 2);
+        function getNextPair() {
+            if (gameState.availablePairs.length === 0) {
+                gameState.availablePairs = [...gameState.pairs];
+                shuffle(gameState.availablePairs);
+            }
+            return gameState.availablePairs.pop();
+        }
 
-            newPairs.slice(0, neededPairs).forEach(pair => {
-                if (englishColumn.children.length < 6) {
-                    createCard(pair.english, 'english');
-                }
-                if (swedishColumn.children.length < 6) {
-                    createCard(pair.swedish, 'swedish');
-                }
-                gameState.activePairs.delete(pair);
-            });
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
         function startTimer() {
@@ -408,10 +435,15 @@
             clearInterval(gameState.timerId);
             gameScreen.classList.remove('active');
             resultsScreen.classList.add('active');
+            updateResults();
+        }
+
+        function updateResults() {
             document.getElementById('totalCorrect').textContent = gameState.correctMatches;
             document.getElementById('totalIncorrect').textContent = gameState.incorrectMatches;
             const tbody = document.querySelector('#resultsTable tbody');
             tbody.innerHTML = '';
+            
             gameState.stats.forEach((stats, englishWord) => {
                 const pair = gameState.pairs.find(p => p.english === englishWord);
                 const row = document.createElement('tr');
