@@ -175,6 +175,12 @@
             background: #ffaaaa;
         }
 
+        .card.empty {
+            background: #eee;
+            border: 1px dashed #ccc;
+            cursor: default;
+        }
+
         /* Pause Screen */
         #pause-screen {
             position: fixed;
@@ -440,7 +446,7 @@
                 document.getElementById('error-msg').textContent = 'Add at least 6 pairs to start!';
                 return;
             }
-            gamePairs = shuffle([...wordList]).slice(0, 6); // Take 6 pairs for 6 rows
+            gamePairs = shuffle([...wordList]).slice(0, 6); // Initial 6 pairs
             correctCount = 0;
             incorrectCount = 0;
             timeElapsed = 0;
@@ -452,10 +458,16 @@
         function setupGame() {
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
-            gamePairs.forEach(pair => {
-                grid.appendChild(createCard(pair.english, 'english', pair.rowId));
-                grid.appendChild(createCard(pair.swedish, 'swedish', pair.rowId));
-            });
+            const englishWords = shuffle(gamePairs.map(pair => ({ text: pair.english, rowId: pair.rowId })));
+            const swedishWords = shuffle(gamePairs.map(pair => ({ text: pair.swedish, rowId: pair.rowId })));
+            // Fill left column (English)
+            for (let i = 0; i < 6; i++) {
+                grid.appendChild(createCard(englishWords[i].text, 'english', englishWords[i].rowId));
+            }
+            // Fill right column (Swedish, shuffled independently)
+            for (let i = 0; i < 6; i++) {
+                grid.appendChild(createCard(swedishWords[i].text, 'swedish', swedishWords[i].rowId));
+            }
             updateProgress();
         }
 
@@ -464,13 +476,13 @@
             card.classList.add('card');
             card.textContent = text;
             card.dataset.type = type;
-            card.dataset.rowId = rowId; // Tie card to its original row
+            card.dataset.rowId = rowId;
             card.addEventListener('click', () => selectCard(card));
             return card;
         }
 
         function selectCard(card) {
-            if (selectedCards.length >= 2 || card.classList.contains('selected')) return;
+            if (selectedCards.length >= 2 || card.classList.contains('selected') || card.classList.contains('empty')) return;
             card.classList.add('selected');
             selectedCards.push(card);
             if (selectedCards.length === 2) {
@@ -484,7 +496,14 @@
                 card1.classList.add('correct');
                 card2.classList.add('correct');
                 correctCount++;
-                setTimeout(() => replaceCards(card1, card2), 500);
+                setTimeout(() => {
+                    card1.classList.add('empty');
+                    card2.classList.add('empty');
+                    card1.textContent = '';
+                    card2.textContent = '';
+                    selectedCards = [];
+                    refillGrid();
+                }, 1000); // 1-second delay
             } else {
                 card1.classList.add('incorrect');
                 card2.classList.add('incorrect');
@@ -498,88 +517,10 @@
             updateProgress();
         }
 
-        function replaceCards(card1, card2) {
+        function refillGrid() {
             const grid = document.getElementById('game-grid');
-            const newPair = shuffle([...wordList])[0]; // Pick from full list to avoid duplicates
-            const newCard1 = createCard(newPair.english, 'english', newPair.rowId);
-            const newCard2 = createCard(newPair.swedish, 'swedish', newPair.rowId);
-            grid.replaceChild(newCard1, card1);
-            grid.replaceChild(newCard2, card2);
-            selectedCards = [];
-        }
-
-        function shuffle(array) {
-            return array.sort(() => Math.random() - 0.5);
-        }
-
-        function updateProgress() {
-            const timeLeft = Math.max(0, timeLimit - timeElapsed);
-            document.getElementById('progress').textContent = `Pairs Matched: ${correctCount} | Incorrect: ${incorrectCount} | Time Left: ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
-            document.getElementById('pause-progress').textContent = document.getElementById('progress').textContent;
-        }
-
-        function startTimer() {
-            startTime = Date.now();
-            timer = setInterval(() => {
-                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-                updateProgress();
-                if (timeElapsed >= timeLimit) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        function pauseGame() {
-            clearInterval(timer);
-            switchScreen('pause-screen');
-        }
-
-        function resumeGame() {
-            switchScreen('game-screen');
-            startTime = Date.now() - timeElapsed * 1000; // Resume from where paused
-            timer = setInterval(() => {
-                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
-                updateProgress();
-                if (timeElapsed >= timeLimit) {
-                    endGame();
-                }
-            }, 1000);
-        }
-
-        function endGame() {
-            clearInterval(timer);
-            switchScreen('results-screen');
-            document.getElementById('stats').innerHTML = `
-                Correct: ${correctCount}<br>
-                Incorrect: ${incorrectCount}<br>
-                Score: ${correctCount * 10 - incorrectCount * 5}
-            `;
-        }
-
-        // Navigation
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function replayGame() {
-            gamePairs = shuffle([...wordList]).slice(0, 6);
-            correctCount = 0;
-            incorrectCount = 0;
-            timeElapsed = 0;
-            switchScreen('game-screen');
-            setupGame();
-            startTimer();
-        }
-
-        function newWords() {
-            switchScreen('input-screen');
-            renderInputGrid();
-        }
-
-        // Initialize
-        loadSavedList();
-        checkInputValidity();
-    </script>
-</body>
-</html>
+            const cards = Array.from(grid.children);
+            const emptySlots = cards.filter(card => card.classList.contains('empty'));
+            if (emptySlots.length > 0) {
+                const newPair = shuffle([...wordList])[0];
+                const emptyIndices = shuffle(cards.map((card, i) => card.classList.contains('empty') ? i : -1).filter(i => i !== -
