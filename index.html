@@ -17,7 +17,7 @@
 
         body {
             background: #f7f7ff;
-            padding: 10px;
+            padding: 20px;
             font-size: 16px;
             line-height: 1.5;
         }
@@ -26,10 +26,13 @@
             font-size: 18px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .screen {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
             display: none;
         }
 
@@ -38,33 +41,64 @@
         }
 
         /* Input Screen */
-        #input-screen {
-            max-width: 600px;
-            margin: 0 auto;
+        .input-grid {
+            width: 80%;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        .grid {
+        .grid-header {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
+            grid-template-columns: 50px 1fr 1fr;
+            background: #f7f7f7;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
         }
 
-        .grid input {
-            padding: 8px;
-            border: 1px solid #ccc;
+        .grid-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 1fr;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .row-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .grid-input {
+            border: 1px solid #ddd;
             border-radius: 4px;
-            min-height: 48px;
-        }
-
-        .grid .row-num {
-            font-size: 14px;
-            text-align: center;
             padding: 8px;
+            margin: 0 5px;
+            min-height: 48px;
+            transition: border-color 0.2s;
         }
 
-        #more-rows {
-            text-align: center;
-            color: #888;
+        .grid-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .more-rows {
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+            border-top: 2px solid #ddd;
+        }
+
+        .timer-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
         }
 
         .buttons {
@@ -76,22 +110,27 @@
         }
 
         button {
-            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 4px;
-            background: #aaffaa;
+            padding: 10px 20px;
+            border-radius: 25px;
             cursor: pointer;
             min-height: 48px;
         }
 
         button:hover {
-            background: #88ee88;
+            background: #45a049;
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
         }
 
         #error-msg {
             color: #ffaaaa;
-            text-align: center;
-            margin-top: 5px;
+            margin-top: 10px;
         }
 
         /* Game Screen */
@@ -136,11 +175,34 @@
             background: #ffaaaa;
         }
 
+        /* Pause Screen */
+        #pause-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #pause-screen.active {
+            display: flex;
+        }
+
+        .pause-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
         /* Results Screen */
         #results-screen {
             max-width: 600px;
             margin: 0 auto;
-            text-align: center;
         }
 
         #stats {
@@ -149,8 +211,14 @@
 
         /* Mobile Adjustments */
         @media (max-width: 400px) {
-            .grid, .game-grid {
+            .grid-row, .game-grid {
                 grid-template-columns: 1fr;
+            }
+            .grid-header {
+                display: none;
+            }
+            .grid-input {
+                margin: 5px 0;
             }
             button {
                 width: 100%;
@@ -161,19 +229,25 @@
 <body>
     <!-- HTML -->
     <div id="input-screen" class="screen active">
-        <h1>Enter Swedish-English Vocabulary</h1>
-        <div id="input-grid" class="grid"></div>
-        <div id="more-rows">(...)</div>
-        <select id="presets">
-            <option value="">Select Preset List</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-        </select>
+        <h1>Vocabulary Matching Game</h1>
+        <div class="input-grid">
+            <div class="grid-header">
+                <div class="row-number"></div>
+                <div>English</div>
+                <div>Svenska</div>
+            </div>
+            <div id="gridBody"></div>
+            <div class="more-rows">(...)</div>
+        </div>
+        <div class="timer-controls">
+            <button id="decreaseTime">←</button>
+            <div id="timeDisplay">⏳ 2:00</div>
+            <button id="increaseTime">→</button>
+        </div>
         <div class="buttons">
-            <button onclick="addRow()">Add Row</button>
             <button onclick="loadSavedList()">Load Saved</button>
             <button onclick="exportList()">Export List</button>
-            <button onclick="startGame()">Start Game</button>
+            <button id="startGame" onclick="startGame()" disabled>Start Game</button>
         </div>
         <div id="error-msg"></div>
     </div>
@@ -185,6 +259,14 @@
         <div class="buttons">
             <button onclick="pauseGame()">Pause</button>
             <button onclick="endGame()">Finish</button>
+        </div>
+    </div>
+
+    <div id="pause-screen" class="screen">
+        <div class="pause-content">
+            <h1>Paused</h1>
+            <p id="pause-progress"></p>
+            <button onclick="resumeGame()">Resume</button>
         </div>
     </div>
 
@@ -205,73 +287,91 @@
         let correctCount = 0;
         let incorrectCount = 0;
         let timer;
-        const TIME_LIMIT = 120; // 2 minutes default
+        let timeLimit = 120; // Default 2 minutes in seconds
+        let startTime;
+        let timeElapsed = 0;
 
-        // Preset Lists
-        const presets = {
-            beginner: [
-                { english: "cat", swedish: "katt" },
-                { english: "dog", swedish: "hund" },
-                { english: "house", swedish: "hus" },
-                { english: "car", swedish: "bil" },
-                { english: "apple", swedish: "äpple" },
-                { english: "book", swedish: "bok" }
-            ],
-            intermediate: [
-                { english: "friend", swedish: "vän" },
-                { english: "school", swedish: "skola" },
-                { english: "family", swedish: "familj" },
-                { english: "street", swedish: "gata" },
-                { english: "summer", swedish: "sommar" },
-                { english: "winter", swedish: "vinter" }
-            ]
-        };
+        // Input Screen Logic
+        const gridBody = document.getElementById('gridBody');
+        let rowCount = 15;
 
-        // Initialize Input Screen
-        function initInputScreen() {
-            const grid = document.getElementById('input-grid');
-            grid.innerHTML = '';
-            for (let i = 0; i < 10; i++) {
-                addInputRow(i + 1);
-            }
-            loadSavedList();
-            document.getElementById('presets').addEventListener('change', (e) => {
-                if (e.target.value) {
-                    wordList = presets[e.target.value];
-                    renderInputGrid();
-                    saveList();
+        function createInputRow(index) {
+            const row = document.createElement('div');
+            row.className = 'grid-row';
+            row.innerHTML = `
+                <div class="row-number">${index + 1}</div>
+                <input class="grid-input english-input" data-row="${index}" placeholder="English">
+                <input class="grid-input svenska-input" data-row="${index}" placeholder="Svenska">
+            `;
+            return row;
+        }
+
+        // Initialize grid
+        for (let i = 0; i < rowCount; i++) {
+            gridBody.appendChild(createInputRow(i));
+        }
+
+        // Paste handler
+        gridBody.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text').split('\n');
+            const rows = Array.from(gridBody.querySelectorAll('.grid-row'));
+
+            pasteData.forEach((rowData, index) => {
+                const [english, swedish] = rowData.split('\t').map(d => d.trim());
+                
+                if (index >= rows.length) {
+                    const newRow = createInputRow(rows.length);
+                    gridBody.appendChild(newRow);
+                    rows.push(newRow);
                 }
+
+                const inputs = rows[index].querySelectorAll('input');
+                inputs[0].value = english || '';
+                inputs[1].value = swedish || '';
+            });
+
+            updateRowNumbers();
+            checkInputValidity();
+            saveList();
+        });
+
+        // Input monitoring
+        gridBody.addEventListener('input', () => {
+            checkInputValidity();
+            saveList();
+        });
+
+        function updateRowNumbers() {
+            Array.from(gridBody.querySelectorAll('.grid-row')).forEach((row, i) => {
+                row.querySelector('.row-number').textContent = i + 1;
             });
         }
 
-        function addInputRow(num) {
-            const grid = document.getElementById('input-grid');
-            const row = document.createElement('div');
-            row.innerHTML = `
-                <input type="text" placeholder="English" onblur="updateWordList()">
-                <input type="text" placeholder="Svenska" onblur="updateWordList()">
-            `;
-            grid.appendChild(row);
-        }
-
-        function addRow() {
-            addInputRow(document.querySelectorAll('#input-grid input').length / 2 + 1);
+        function checkInputValidity() {
+            const validPairs = Array.from(gridBody.querySelectorAll('.grid-row'))
+                .filter(row => {
+                    const inputs = row.querySelectorAll('input');
+                    return inputs[0].value.trim() && inputs[1].value.trim();
+                }).length;
+            document.getElementById('startGame').disabled = validPairs < 6;
         }
 
         function updateWordList() {
-            const inputs = document.querySelectorAll('#input-grid input');
-            wordList = [];
-            for (let i = 0; i < inputs.length; i += 2) {
-                const english = inputs[i].value.trim();
-                const swedish = inputs[i + 1].value.trim();
-                if (english && swedish) {
-                    wordList.push({ english, swedish });
-                }
-            }
-            saveList();
+            wordList = Array.from(gridBody.querySelectorAll('.grid-row'))
+                .map((row, index) => {
+                    const inputs = row.querySelectorAll('input');
+                    return { 
+                        english: inputs[0].value.trim(), 
+                        swedish: inputs[1].value.trim(),
+                        rowId: index // Unique ID for each row
+                    };
+                })
+                .filter(pair => pair.english && pair.swedish);
         }
 
         function saveList() {
+            updateWordList();
             localStorage.setItem('vocabList', JSON.stringify(wordList));
         }
 
@@ -281,9 +381,11 @@
                 wordList = JSON.parse(saved);
                 renderInputGrid();
             }
+            checkInputValidity();
         }
 
         function exportList() {
+            updateWordList();
             const text = wordList.map(pair => `${pair.english}\t${pair.swedish}`).join('\n');
             const blob = new Blob([text], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
@@ -294,22 +396,42 @@
         }
 
         function renderInputGrid() {
-            const grid = document.getElementById('input-grid');
-            grid.innerHTML = '';
+            gridBody.innerHTML = '';
             wordList.forEach((pair, i) => {
                 const row = document.createElement('div');
+                row.className = 'grid-row';
                 row.innerHTML = `
-                    <input type="text" value="${pair.english}" onblur="updateWordList()">
-                    <input type="text" value="${pair.swedish}" onblur="updateWordList()">
+                    <div class="row-number">${i + 1}</div>
+                    <input class="grid-input english-input" data-row="${i}" value="${pair.english}">
+                    <input class="grid-input svenska-input" data-row="${i}" value="${pair.swedish}">
                 `;
-                grid.appendChild(row);
+                gridBody.appendChild(row);
             });
-            if (wordList.length < 10) {
-                for (let i = wordList.length; i < 10; i++) {
-                    addInputRow(i + 1);
-                }
+            while (gridBody.querySelectorAll('.grid-row').length < rowCount) {
+                gridBody.appendChild(createInputRow(gridBody.querySelectorAll('.grid-row').length));
             }
         }
+
+        // Timer Controls
+        document.getElementById('decreaseTime').addEventListener('click', () => {
+            if (timeLimit > 30) {
+                timeLimit -= 30;
+                updateTimeDisplay();
+            }
+        });
+
+        document.getElementById('increaseTime').addEventListener('click', () => {
+            timeLimit += 30;
+            updateTimeDisplay();
+        });
+
+        function updateTimeDisplay() {
+            const minutes = Math.floor(timeLimit / 60);
+            const seconds = timeLimit % 60;
+            document.getElementById('timeDisplay').textContent = `⏳ ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+
+        updateTimeDisplay();
 
         // Game Logic
         function startGame() {
@@ -318,10 +440,11 @@
                 document.getElementById('error-msg').textContent = 'Add at least 6 pairs to start!';
                 return;
             }
-            switchScreen('game-screen');
-            gamePairs = [...wordList];
+            gamePairs = shuffle([...wordList]).slice(0, 6); // Take 6 pairs for 6 rows
             correctCount = 0;
             incorrectCount = 0;
+            timeElapsed = 0;
+            switchScreen('game-screen');
             setupGame();
             startTimer();
         }
@@ -329,25 +452,19 @@
         function setupGame() {
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
-            const shuffledEnglish = shuffle([...gamePairs]).slice(0, 4);
-            const shuffledSwedish = shuffle([...gamePairs]).slice(0, 4);
-            shuffledEnglish.forEach(pair => {
-                const card = createCard(pair.english, 'english');
-                grid.appendChild(card);
-            });
-            shuffledSwedish.forEach(pair => {
-                const card = createCard(pair.swedish, 'swedish');
-                grid.appendChild(card);
+            gamePairs.forEach(pair => {
+                grid.appendChild(createCard(pair.english, 'english', pair.rowId));
+                grid.appendChild(createCard(pair.swedish, 'swedish', pair.rowId));
             });
             updateProgress();
         }
 
-        function createCard(text, type) {
+        function createCard(text, type, rowId) {
             const card = document.createElement('div');
             card.classList.add('card');
             card.textContent = text;
             card.dataset.type = type;
-            card.dataset.text = text;
+            card.dataset.rowId = rowId; // Tie card to its original row
             card.addEventListener('click', () => selectCard(card));
             return card;
         }
@@ -363,9 +480,7 @@
 
         function checkMatch() {
             const [card1, card2] = selectedCards;
-            const pair1 = gamePairs.find(p => p.english === card1.dataset.text || p.swedish === card1.dataset.text);
-            const pair2 = gamePairs.find(p => p.english === card2.dataset.text || p.swedish === card2.dataset.text);
-            if (pair1 === pair2 && card1.dataset.type !== card2.dataset.type) {
+            if (card1.dataset.rowId === card2.dataset.rowId && card1.dataset.type !== card2.dataset.type) {
                 card1.classList.add('correct');
                 card2.classList.add('correct');
                 correctCount++;
@@ -385,9 +500,9 @@
 
         function replaceCards(card1, card2) {
             const grid = document.getElementById('game-grid');
-            const newPair = shuffle([...gamePairs])[0];
-            const newCard1 = createCard(newPair.english, 'english');
-            const newCard2 = createCard(newPair.swedish, 'swedish');
+            const newPair = shuffle([...wordList])[0]; // Pick from full list to avoid duplicates
+            const newCard1 = createCard(newPair.english, 'english', newPair.rowId);
+            const newCard2 = createCard(newPair.swedish, 'swedish', newPair.rowId);
             grid.replaceChild(newCard1, card1);
             grid.replaceChild(newCard2, card2);
             selectedCards = [];
@@ -398,15 +513,17 @@
         }
 
         function updateProgress() {
-            document.getElementById('progress').textContent = `Pairs Matched: ${correctCount} | Incorrect: ${incorrectCount} | Time Left: ${Math.max(0, TIME_LIMIT - Math.floor((Date.now() - startTime) / 1000))}s`;
+            const timeLeft = Math.max(0, timeLimit - timeElapsed);
+            document.getElementById('progress').textContent = `Pairs Matched: ${correctCount} | Incorrect: ${incorrectCount} | Time Left: ${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
+            document.getElementById('pause-progress').textContent = document.getElementById('progress').textContent;
         }
 
-        let startTime;
         function startTimer() {
             startTime = Date.now();
             timer = setInterval(() => {
+                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
                 updateProgress();
-                if (Date.now() - startTime >= TIME_LIMIT * 1000) {
+                if (timeElapsed >= timeLimit) {
                     endGame();
                 }
             }, 1000);
@@ -414,8 +531,19 @@
 
         function pauseGame() {
             clearInterval(timer);
-            alert('Game Paused\n' + document.getElementById('progress').textContent);
-            startTimer();
+            switchScreen('pause-screen');
+        }
+
+        function resumeGame() {
+            switchScreen('game-screen');
+            startTime = Date.now() - timeElapsed * 1000; // Resume from where paused
+            timer = setInterval(() => {
+                timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+                updateProgress();
+                if (timeElapsed >= timeLimit) {
+                    endGame();
+                }
+            }, 1000);
         }
 
         function endGame() {
@@ -435,6 +563,10 @@
         }
 
         function replayGame() {
+            gamePairs = shuffle([...wordList]).slice(0, 6);
+            correctCount = 0;
+            incorrectCount = 0;
+            timeElapsed = 0;
             switchScreen('game-screen');
             setupGame();
             startTimer();
@@ -442,11 +574,12 @@
 
         function newWords() {
             switchScreen('input-screen');
-            initInputScreen();
+            renderInputGrid();
         }
 
-        // Start the app
-        initInputScreen();
+        // Initialize
+        loadSavedList();
+        checkInputValidity();
     </script>
 </body>
 </html>
