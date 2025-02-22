@@ -70,7 +70,7 @@
         }
         .grid-input:focus {
             outline: none;
-            border-color: #5e2a84;
+            border-color: #6060D6;
         }
         .more-rows {
             padding: 5px;
@@ -93,7 +93,7 @@
             justify-content: center;
         }
         button {
-            background: #5e2a84;
+            background: #6060D6;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -109,13 +109,13 @@
             cursor: not-allowed;
         }
         .delete-btn {
-            background: #ff5555;
+            background: #6060D6;
             padding: 5px;
             min-height: 0;
             font-size: 14px;
         }
         .delete-btn:hover {
-            background: #dd4444;
+            background: #7a3ca4;
         }
         #error-msg {
             color: #ffaaaa;
@@ -142,13 +142,11 @@
             text-align: center;
             cursor: pointer;
             min-height: 48px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.3s ease, background 0.3s ease;
             opacity: 1;
         }
         .card.selected {
-            transform: scale(1.1);
-            border-color: #5e2a84;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            background: #A8A2FD;
         }
         .card.correct {
             background: #aaffaa;
@@ -186,6 +184,32 @@
         }
         #stats {
             margin: 20px 0;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .results-table th, .results-table td {
+            padding: 5px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .results-table th {
+            background: #f7f7f7;
+        }
+        .correct {
+            color: #006400;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #8B0000;
+            font-weight: bold;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 14px;
         }
         @media (max-width: 400px) {
             .grid-row, .game-grid {
@@ -251,6 +275,18 @@
     <div id="results-screen" class="screen">
         <h1>Results</h1>
         <div id="stats"></div>
+        <div class="feedback" id="feedback"></div>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>English</th>
+                    <th>Svenska</th>
+                    <th>Correct</th>
+                    <th>Incorrect</th>
+                </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+        </table>
         <div class="buttons">
             <button onclick="replayGame()">Replay</button>
             <button onclick="newWords()">New Words</button>
@@ -267,6 +303,8 @@
         let timeLimit = 120; // Default 2 minutes in seconds
         let startTime;
         let timeElapsed = 0;
+        let matchData = {};
+        let fastestMatch = { pair: null, time: Infinity };
 
         const gridBody = document.getElementById('gridBody');
         let rowCount = 5;
@@ -431,6 +469,11 @@
             correctCount = 0;
             incorrectCount = 0;
             timeElapsed = 0;
+            matchData = {};
+            fastestMatch = { pair: null, time: Infinity };
+            wordList.forEach(pair => {
+                matchData[pair.rowId] = { correct: 0, incorrect: 0, times: [] };
+            });
             switchScreen('game-screen');
             setupGame();
             startTimer();
@@ -460,20 +503,16 @@
 
         function selectCard(card) {
             const type = card.dataset.type;
+            if (card.classList.contains('correct') || card.classList.contains('empty')) return;
             if (selectedCards[type] === card) {
-                // Deselect if already selected
                 card.classList.remove('selected');
                 selectedCards[type] = null;
-            } else if (selectedCards[type]) {
-                // Swap selection in the same column
-                selectedCards[type].classList.remove('selected');
-                card.classList.add('selected');
-                selectedCards[type] = card;
             } else {
-                // Select if no card is selected in this column
+                if (selectedCards[type]) {
+                    selectedCards[type].classList.remove('selected');
+                }
                 card.classList.add('selected');
                 selectedCards[type] = card;
-                // Check if both columns have selections
                 if (selectedCards.english && selectedCards.swedish) {
                     checkMatch();
                 }
@@ -483,14 +522,18 @@
         function checkMatch() {
             const card1 = selectedCards.english;
             const card2 = selectedCards.swedish;
+            const matchStartTime = Date.now();
             if (card1.dataset.rowId === card2.dataset.rowId) {
+                const pairId = card1.dataset.rowId;
+                const matchTime = (Date.now() - matchStartTime) / 1000;
+                matchData[pairId].correct++;
+                matchData[pairId].times.push(matchTime);
+                if (matchTime < fastestMatch.time) {
+                    fastestMatch = { pair: wordList.find(p => p.rowId == pairId), time: matchTime };
+                }
                 card1.classList.add('correct');
                 card2.classList.add('correct');
                 correctCount++;
-                // Clear selections immediately
-                selectedCards.english = null;
-                selectedCards.swedish = null;
-                // Handle animation and refill
                 setTimeout(() => {
                     card1.classList.remove('correct');
                     card2.classList.remove('correct');
@@ -498,11 +541,16 @@
                     card2.classList.add('empty');
                     card1.textContent = '';
                     card2.textContent = '';
-                    // Random delay between 500-1000ms before refill
-                    const delay = 500 + Math.random() * 500;
+                    selectedCards.english = null;
+                    selectedCards.swedish = null;
+                    const delay = 750 + Math.random() * 500;
                     setTimeout(refillGrid, delay);
                 }, 300);
             } else {
+                const pairId1 = card1.dataset.rowId;
+                const pairId2 = card2.dataset.rowId;
+                matchData[pairId1].incorrect++;
+                matchData[pairId2].incorrect++;
                 card1.classList.add('incorrect');
                 card2.classList.add('incorrect');
                 incorrectCount++;
@@ -522,10 +570,8 @@
             const emptyEnglish = cards.filter(card => card.classList.contains('empty') && card.dataset.type === 'english');
             const emptySwedish = cards.filter(card => card.classList.contains('empty') && card.dataset.type === 'swedish');
             if (emptyEnglish.length > 0 && emptySwedish.length > 0) {
-                // Get current words in each column
                 const currentEnglish = cards.filter(c => c.dataset.type === 'english' && !c.classList.contains('empty')).map(c => c.textContent);
                 const currentSwedish = cards.filter(c => c.dataset.type === 'swedish' && !c.classList.contains('empty')).map(c => c.textContent);
-                // Filter available pairs
                 const availablePairs = wordList.filter(pair => !currentEnglish.includes(pair.english) && !currentSwedish.includes(pair.swedish));
                 if (availablePairs.length > 0) {
                     const newPair = availablePairs[Math.floor(Math.random() * availablePairs.length)];
@@ -582,11 +628,46 @@
         function endGame() {
             clearInterval(timer);
             switchScreen('results-screen');
-            document.getElementById('stats').innerHTML = `
+            const stats = document.getElementById('stats');
+            stats.innerHTML = `
                 Correct: ${correctCount}<br>
                 Incorrect: ${incorrectCount}<br>
                 XP: ${correctCount * 10 - incorrectCount * 5}
             `;
+
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = '';
+
+            // Find the pair with the most incorrect matches
+            let mostIncorrectPair = null;
+            let maxIncorrect = 0;
+            for (const pairId in matchData) {
+                if (matchData[pairId].incorrect > maxIncorrect) {
+                    maxIncorrect = matchData[pairId].incorrect;
+                    mostIncorrectPair = wordList.find(p => p.rowId == pairId);
+                }
+            }
+            if (mostIncorrectPair) {
+                feedback.innerHTML += `You struggled with '${mostIncorrectPair.english} - ${mostIncorrectPair.swedish}'<br>`;
+            }
+
+            if (fastestMatch.pair) {
+                feedback.innerHTML += `Fastest: '${fastestMatch.pair.english} - ${fastestMatch.pair.swedish}' in ${fastestMatch.time.toFixed(1)}s<br>`;
+            }
+
+            const resultsBody = document.getElementById('results-body');
+            resultsBody.innerHTML = '';
+            wordList.forEach(pair => {
+                const data = matchData[pair.rowId];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pair.english}</td>
+                    <td>${pair.swedish}</td>
+                    <td class="correct">${data.correct}</td>
+                    <td class="incorrect">${data.incorrect}</td>
+                `;
+                resultsBody.appendChild(row);
+            });
         }
 
         function switchScreen(screenId) {
@@ -599,6 +680,11 @@
             correctCount = 0;
             incorrectCount = 0;
             timeElapsed = 0;
+            matchData = {};
+            fastestMatch = { pair: null, time: Infinity };
+            wordList.forEach(pair => {
+                matchData[pair.rowId] = { correct: 0, incorrect: 0, times: [] };
+            });
             switchScreen('game-screen');
             setupGame();
             startTimer();
