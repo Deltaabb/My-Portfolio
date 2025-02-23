@@ -13,7 +13,7 @@
             font-family: 'Lexend', sans-serif;
         }
         body {
-            background: #f7f7ff;
+            background: #e6e6fa; /* Light purple/lavender background as per image */
             padding: 20px;
             font-size: 16px;
             line-height: 1.5;
@@ -23,6 +23,7 @@
             font-weight: bold;
             text-align: center;
             margin-bottom: 20px;
+            color: #000; /* Black title as per image */
         }
         .screen {
             max-width: 800px;
@@ -33,12 +34,15 @@
         .screen.active {
             display: block;
         }
+
+        /* Input Screen Styles */
         .input-grid {
             width: 80%;
             margin: 20px auto;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+            border: 2px solid #6060D6; /* Purple border */
+            border-radius: 10px; /* Rounded outer edges */
             overflow: hidden;
+            background: white;
         }
         .grid-header {
             display: grid;
@@ -61,22 +65,28 @@
             font-size: 0.9em;
         }
         .grid-input {
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: none; /* No individual borders */
             padding: 8px;
-            margin: 0 5px;
+            margin: 0; /* No gaps between inputs */
             min-height: 40px;
             font-size: 14px;
+            width: 100%;
         }
         .grid-input:focus {
             outline: none;
-            border-color: #6060D6;
+            border: 1px solid #6060D6; /* Purple outline on focus */
         }
-        .more-rows {
-            padding: 5px;
-            color: #666;
-            font-style: italic;
-            border-top: 2px solid #ddd;
+        .add-row {
+            width: 100%;
+            background: #6060D6;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .add-row:hover {
+            background: #7a3ca4;
         }
         .timer-controls {
             display: flex;
@@ -93,11 +103,11 @@
             justify-content: center;
         }
         button {
-            background: #6060D6;
+            background: #6060D6; /* Purple buttons as per image */
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 25px;
+            border-radius: 25px; /* Oval buttons */
             cursor: pointer;
             min-height: 48px;
         }
@@ -109,18 +119,22 @@
             cursor: not-allowed;
         }
         .delete-btn {
-            background: #6060D6;
+            background: none;
+            color: #6060D6;
+            font-size: 18px;
             padding: 5px;
             min-height: 0;
-            font-size: 14px;
+            transition: color 0.3s;
         }
-        .delete-btn:hover {
-            background: #7a3ca4;
+        .delete-btn:hover, .delete-btn.active {
+            color: #ff4444; /* Red on hover or active */
         }
         #error-msg {
             color: #ffaaaa;
             margin-top: 10px;
         }
+
+        /* Game Screen Styles */
         #game-screen {
             max-width: 600px;
             margin: 0 auto;
@@ -128,6 +142,8 @@
         #progress {
             text-align: center;
             margin-bottom: 10px;
+            color: #000; /* Black progress text as per image */
+            font-size: 14px;
         }
         .game-grid {
             display: grid;
@@ -135,21 +151,30 @@
             gap: 10px;
         }
         .card {
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background: white; /* White background as per image */
+            border: 1px solid #6060D6; /* Thin purple border */
+            border-radius: 4px; /* Rounded corners */
             padding: 15px;
             text-align: center;
             cursor: pointer;
             min-height: 48px;
-            transition: opacity 0.3s ease, background 0.3s ease;
-            opacity: 1;
+            transition: all 0.3s ease;
+            color: #000; /* Black text */
+            opacity: 0; /* Start hidden for staggered appearance */
+            animation: fadeIn 0.3s ease forwards;
+        }
+        .card:nth-child(odd) { animation-delay: 0.1s; }
+        .card:nth-child(even) { animation-delay: 0.2s; }
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
         .card.selected {
-            background: #A8A2FD;
+            background: #f0f0ff; /* Light grey with purple hint */
+            border: 2px solid #6060D6; /* Purple accent outline */
         }
         .card.correct {
-            background: #aaffaa;
+            background: #aaffaa; /* Green for correct match */
+            color: #000; /* Regular black text */
         }
         .card.incorrect {
             background: #ffaaaa;
@@ -158,13 +183,16 @@
             opacity: 0;
             pointer-events: none;
         }
+
+        /* Pause Screen Styles */
         #pause-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent */
+            backdrop-filter: blur(5px); /* Blurred background */
             display: none;
             justify-content: center;
             align-items: center;
@@ -178,6 +206,8 @@
             border-radius: 10px;
             text-align: center;
         }
+
+        /* Results Screen Styles */
         #results-screen {
             max-width: 600px;
             margin: 0 auto;
@@ -193,7 +223,7 @@
         }
         .results-table th, .results-table td {
             padding: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid #6060D6; /* Purple borders */
             text-align: center;
         }
         .results-table th {
@@ -211,23 +241,31 @@
             margin-top: 20px;
             font-size: 14px;
         }
+
+        /* Mobile Adjustments */
         @media (max-width: 400px) {
-            .grid-row, .game-grid {
-                grid-template-columns: 1fr;
-            }
-            .grid-header {
-                display: none;
+            .grid-row {
+                grid-template-columns: 30px 1fr 1fr 30px;
             }
             .grid-input {
-                margin: 5px 0;
+                font-size: 12px; /* Smaller text */
+                overflow: hidden;
+                text-overflow: ellipsis; /* Handle long words */
+            }
+            .game-grid {
+                grid-template-columns: 1fr 1fr;
             }
             button {
                 width: 100%;
+            }
+            .delete-btn {
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Input Screen -->
     <div id="input-screen" class="screen active">
         <h1>Vocabulary Matching Game</h1>
         <div class="input-grid">
@@ -238,7 +276,7 @@
                 <div></div>
             </div>
             <div id="gridBody"></div>
-            <div class="more-rows">(...)</div>
+            <button class="add-row" onclick="addRow()">+</button>
         </div>
         <div class="timer-controls">
             <button id="decreaseTime">←</button>
@@ -249,11 +287,11 @@
             <button onclick="loadSavedList()">Load Saved</button>
             <button onclick="exportList()">Export List</button>
             <button id="startGame" onclick="startGame()" disabled>Start Game</button>
-            <button onclick="addRow()">+</button>
         </div>
         <div id="error-msg"></div>
     </div>
 
+    <!-- Game Screen -->
     <div id="game-screen" class="screen">
         <h1>Match Madness</h1>
         <div id="progress"></div>
@@ -264,6 +302,7 @@
         </div>
     </div>
 
+    <!-- Pause Screen -->
     <div id="pause-screen" class="screen">
         <div class="pause-content">
             <h1>Paused</h1>
@@ -272,6 +311,7 @@
         </div>
     </div>
 
+    <!-- Results Screen -->
     <div id="results-screen" class="screen">
         <h1>Results</h1>
         <div id="stats"></div>
@@ -312,11 +352,12 @@
         function createInputRow(index) {
             const row = document.createElement('div');
             row.className = 'grid-row';
+            row.dataset.deleteTaps = '0'; // For two-tap deletion on mobile
             row.innerHTML = `
                 <div class="row-number">${index + 1}</div>
                 <input class="grid-input english-input" data-row="${index}" placeholder="English">
                 <input class="grid-input svenska-input" data-row="${index}" placeholder="Svenska">
-                <button class="delete-btn" onclick="deleteRow(this)">−</button>
+                <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
             `;
             return row;
         }
@@ -328,10 +369,31 @@
         }
 
         function deleteRow(button) {
-            button.parentElement.remove();
-            updateRowNumbers();
-            checkInputValidity();
-            saveList();
+            const row = button.parentElement;
+            if ('ontouchstart' in window) { // Mobile two-tap deletion
+                let taps = parseInt(row.dataset.deleteTaps);
+                taps++;
+                row.dataset.deleteTaps = taps;
+                button.classList.add('active');
+                row.style.background = '#ffe6e6'; // Highlight row
+                if (taps === 2) {
+                    row.remove();
+                    updateRowNumbers();
+                    checkInputValidity();
+                    saveList();
+                } else {
+                    setTimeout(() => {
+                        row.dataset.deleteTaps = '0';
+                        button.classList.remove('active');
+                        row.style.background = 'none';
+                    }, 2000);
+                }
+            } else { // Desktop single-click deletion
+                row.remove();
+                updateRowNumbers();
+                checkInputValidity();
+                saveList();
+            }
         }
 
         for (let i = 0; i < rowCount; i++) {
@@ -424,11 +486,12 @@
             wordList.forEach((pair, i) => {
                 const row = document.createElement('div');
                 row.className = 'grid-row';
+                row.dataset.deleteTaps = '0';
                 row.innerHTML = `
                     <div class="row-number">${i + 1}</div>
                     <input class="grid-input english-input" data-row="${i}" value="${pair.english}">
                     <input class="grid-input svenska-input" data-row="${i}" value="${pair.swedish}">
-                    <button class="delete-btn" onclick="deleteRow(this)">−</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
                 `;
                 gridBody.appendChild(row);
             });
@@ -638,7 +701,6 @@
             const feedback = document.getElementById('feedback');
             feedback.innerHTML = '';
 
-            // Find the pair with the most incorrect matches
             let mostIncorrectPair = null;
             let maxIncorrect = 0;
             for (const pairId in matchData) {
@@ -657,7 +719,12 @@
 
             const resultsBody = document.getElementById('results-body');
             resultsBody.innerHTML = '';
-            wordList.forEach(pair => {
+            const sortedPairs = wordList.sort((a, b) => {
+                const aData = matchData[a.rowId];
+                const bData = matchData[b.rowId];
+                return bData.correct - aData.correct || aData.incorrect - bData.incorrect;
+            });
+            sortedPairs.forEach(pair => {
                 const data = matchData[pair.rowId];
                 const row = document.createElement('tr');
                 row.innerHTML = `
