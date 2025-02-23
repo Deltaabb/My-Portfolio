@@ -13,7 +13,7 @@
             font-family: 'Lexend', sans-serif;
         }
         body {
-            background: #e6e6fa;
+            background: #f7f7ff;
             padding: 20px;
             font-size: 16px;
             line-height: 1.5;
@@ -23,7 +23,6 @@
             font-weight: bold;
             text-align: center;
             margin-bottom: 20px;
-            color: #000;
         }
         .screen {
             max-width: 800px;
@@ -37,10 +36,9 @@
         .input-grid {
             width: 80%;
             margin: 20px auto;
-            border: 1px solid #6060D6;
-            border-radius: 8px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
             overflow: hidden;
-            background: white;
         }
         .grid-header {
             display: grid;
@@ -74,17 +72,11 @@
             outline: none;
             border-color: #6060D6;
         }
-        .add-row {
-            width: 100%;
-            background: #6060D6;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .add-row:hover {
-            background: #7a3ca4;
+        .more-rows {
+            padding: 5px;
+            color: #666;
+            font-style: italic;
+            border-top: 2px solid #ddd;
         }
         .timer-controls {
             display: flex;
@@ -117,15 +109,13 @@
             cursor: not-allowed;
         }
         .delete-btn {
-            background: none;
-            color: grey;
-            font-size: 18px;
+            background: #6060D6;
             padding: 5px;
             min-height: 0;
-            transition: color 0.3s;
+            font-size: 14px;
         }
-        .delete-btn:hover, .delete-btn.active {
-            color: #ff4444;
+        .delete-btn:hover {
+            background: #7a3ca4;
         }
         #error-msg {
             color: #ffaaaa;
@@ -138,8 +128,6 @@
         #progress {
             text-align: center;
             margin-bottom: 10px;
-            color: #000;
-            font-size: 14px;
         }
         .game-grid {
             display: grid;
@@ -148,29 +136,20 @@
         }
         .card {
             background: white;
-            border: 1px solid #6060D6;
+            border: 1px solid #ccc;
             border-radius: 4px;
             padding: 15px;
             text-align: center;
             cursor: pointer;
             min-height: 48px;
-            transition: all 0.3s ease;
-            color: #000;
-            opacity: 0;
-            animation: fadeIn 0.3s ease forwards;
-        }
-        .card:nth-child(odd) { animation-delay: 0.1s; }
-        .card:nth-child(even) { animation-delay: 0.2s; }
-        @keyframes fadeIn {
-            to { opacity: 1; }
+            transition: opacity 0.3s ease, background 0.3s ease;
+            opacity: 1;
         }
         .card.selected {
-            background: #f0f0ff;
-            border: 2px solid #6060D6;
+            background: #A8A2FD;
         }
         .card.correct {
             background: #aaffaa;
-            color: #000;
         }
         .card.incorrect {
             background: #ffaaaa;
@@ -185,8 +164,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -215,7 +193,7 @@
         }
         .results-table th, .results-table td {
             padding: 5px;
-            border: 1px solid #6060D6;
+            border: 1px solid #ddd;
             text-align: center;
         }
         .results-table th {
@@ -234,22 +212,17 @@
             font-size: 14px;
         }
         @media (max-width: 400px) {
-            .grid-row {
-                grid-template-columns: 30px 1fr 1fr 30px;
+            .grid-row, .game-grid {
+                grid-template-columns: 1fr;
+            }
+            .grid-header {
+                display: none;
             }
             .grid-input {
-                font-size: 12px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            .game-grid {
-                grid-template-columns: 1fr 1fr;
+                margin: 5px 0;
             }
             button {
                 width: 100%;
-            }
-            .delete-btn {
-                font-size: 16px;
             }
         }
     </style>
@@ -265,7 +238,7 @@
                 <div></div>
             </div>
             <div id="gridBody"></div>
-            <button class="add-row" onclick="addRow()">+</button>
+            <div class="more-rows">(...)</div>
         </div>
         <div class="timer-controls">
             <button id="decreaseTime">←</button>
@@ -276,6 +249,7 @@
             <button onclick="loadSavedList()">Load Saved</button>
             <button onclick="exportList()">Export List</button>
             <button id="startGame" onclick="startGame()" disabled>Start Game</button>
+            <button onclick="addRow()">+</button>
         </div>
         <div id="error-msg"></div>
     </div>
@@ -338,12 +312,11 @@
         function createInputRow(index) {
             const row = document.createElement('div');
             row.className = 'grid-row';
-            row.dataset.deleteTaps = '0'; // For two-tap deletion on mobile
             row.innerHTML = `
                 <div class="row-number">${index + 1}</div>
                 <input class="grid-input english-input" data-row="${index}" placeholder="English">
                 <input class="grid-input svenska-input" data-row="${index}" placeholder="Svenska">
-                <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
+                <button class="delete-btn" onclick="deleteRow(this)">−</button>
             `;
             return row;
         }
@@ -355,42 +328,10 @@
         }
 
         function deleteRow(button) {
-            const row = button.parentElement;
-            if ('ontouchstart' in window) { // Mobile two-tap deletion
-                let taps = parseInt(row.dataset.deleteTaps);
-                taps++;
-                row.dataset.deleteTaps = taps;
-                button.classList.add('active');
-                row.style.background = '#ffe6e6'; // Highlight row
-                if (taps === 2) {
-                    row.remove();
-                    updateRowNumbers();
-                    checkInputValidity();
-                    saveList();
-                    // Slide up animation for rows below
-                    const rows = Array.from(gridBody.children);
-                    const index = rows.indexOf(row);
-                    for (let i = index + 1; i < rows.length; i++) {
-                        rows[i].style.transition = 'transform 0.5s ease';
-                        rows[i].style.transform = 'translateY(-50px)';
-                        setTimeout(() => {
-                            rows[i].style.transform = 'translateY(0)';
-                            rows[i].style.transition = '';
-                        }, 500);
-                    }
-                } else {
-                    setTimeout(() => {
-                        row.dataset.deleteTaps = '0';
-                        button.classList.remove('active');
-                        row.style.background = 'none';
-                    }, 2000);
-                }
-            } else { // Desktop single-click deletion
-                row.remove();
-                updateRowNumbers();
-                checkInputValidity();
-                saveList();
-            }
+            button.parentElement.remove();
+            updateRowNumbers();
+            checkInputValidity();
+            saveList();
         }
 
         for (let i = 0; i < rowCount; i++) {
@@ -483,12 +424,11 @@
             wordList.forEach((pair, i) => {
                 const row = document.createElement('div');
                 row.className = 'grid-row';
-                row.dataset.deleteTaps = '0';
                 row.innerHTML = `
                     <div class="row-number">${i + 1}</div>
                     <input class="grid-input english-input" data-row="${i}" value="${pair.english}">
                     <input class="grid-input svenska-input" data-row="${i}" value="${pair.swedish}">
-                    <button class="delete-btn" onclick="deleteRow(this)">🗑️</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">−</button>
                 `;
                 gridBody.appendChild(row);
             });
@@ -643,15 +583,6 @@
                     swedishCard.dataset.rowId = newPair.rowId;
                     englishCard.classList.remove('empty');
                     swedishCard.classList.remove('empty');
-                    // Staggered fade-in
-                    englishCard.style.opacity = '0';
-                    swedishCard.style.opacity = '0';
-                    setTimeout(() => {
-                        englishCard.style.transition = 'opacity 0.3s ease';
-                        swedishCard.style.transition = 'opacity 0.3s ease';
-                        englishCard.style.opacity = '1';
-                        setTimeout(() => swedishCard.style.opacity = '1', 300); // 300ms delay for second card
-                    }, 0);
                 }
             }
         }
@@ -707,6 +638,7 @@
             const feedback = document.getElementById('feedback');
             feedback.innerHTML = '';
 
+            // Find the pair with the most incorrect matches
             let mostIncorrectPair = null;
             let maxIncorrect = 0;
             for (const pairId in matchData) {
@@ -725,12 +657,7 @@
 
             const resultsBody = document.getElementById('results-body');
             resultsBody.innerHTML = '';
-            const sortedPairs = wordList.sort((a, b) => {
-                const aData = matchData[a.rowId];
-                const bData = matchData[b.rowId];
-                return bData.correct - aData.correct || aData.incorrect - bData.incorrect;
-            });
-            sortedPairs.forEach(pair => {
+            wordList.forEach(pair => {
                 const data = matchData[pair.rowId];
                 const row = document.createElement('tr');
                 row.innerHTML = `
