@@ -61,16 +61,25 @@
             font-size: 0.9em;
         }
         .grid-input {
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: none; /* Remove individual borders */
+            border-right: 1px solid #ddd; /* Internal grid lines */
+            border-bottom: 1px solid #ddd;
             padding: 8px;
-            margin: 0 5px;
+            margin: 0; /* Remove gaps */
             min-height: 40px;
             font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
         }
         .grid-input:focus {
             outline: none;
-            border-color: #6060D6;
+            border: 1px solid #6060D6;
+        }
+        .grid-input:last-child {
+            border-right: none; /* Remove right border for last column */
+        }
+        .grid-row:last-child .grid-input {
+            border-bottom: none; /* Remove bottom border for last row */
         }
         .more-rows {
             padding: 5px;
