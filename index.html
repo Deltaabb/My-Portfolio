@@ -23,7 +23,6 @@
       --pastel-green: #77DD77; /* Pastel green for My Work */
       --pastel-blue: #77EEF2; /* Pastel blue for Contact */
       --neutral-color: #666; /* Neutral color for button outline */
-      --hero-pastel-green: #C4F1A4; /* New pastel green for hero background */
     }
 
     body {
@@ -169,13 +168,13 @@
       justify-content: center;
       align-items: flex-start;
       padding: 5rem 6rem; /* Increased left padding */
-      background-color: var(--hero-pastel-green); /* Updated pastel green background */
+      background-color: var(--pastel-warm-light);
       color: var(--light-text);
       transition: background-color var(--transition-speed);
     }
 
     body.dark-mode .hero {
-      background-color: #A3C985; /* Darker shade of pastel green for dark mode */
+      background-color: var(--pastel-warm-dark);
     }
 
     .hero h1 {
@@ -377,6 +376,9 @@
         <li><a href="#about">About Me</a></li>
         <li><a href="#work">My Work</a></li>
         <li><a href="#contact">Contact</a></li>
+        <li><a href="about.html">About Me</a></li>
+        <li><a href="mywork.html">My Work</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
       <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
     </nav>
