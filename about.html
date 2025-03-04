@@ -4,20 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Me - Delta's UX/UI Portfolio</title>
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Reference to styles.css -->
   <link rel="stylesheet" href="styles.css">
+  <!-- Inline CSS for overlapping images -->
+  <style>
+    .about-images {
+      position: relative;
+      margin-top: 2rem;
+      max-width: 600px; /* Match paragraph width */
+    }
+    .about-images img {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    #profile-img {
+      width: 200px;
+      height: auto;
+    }
+    #totoro-img {
+      width: 150px;
+      height: auto;
+      position: relative;
+      top: -15px; /* Overlap upwards */
+      left: 15px; /* Shift right */
+    }
+    #jewellery-img {
+      width: 150px;
+      height: auto;
+      position: relative;
+      top: -10px; /* Overlap upwards */
+      left: 10px; /* Shift right */
+    }
+  </style>
 </head>
 <body>
+  <!-- Navigation Placeholder -->
   <header id="nav-placeholder"></header>
 
-  <!-- About Me Content -->
-  <section id="about">
-    <h1>About Me</h1>
-    <p><!-- Your about me content here --></p>
+  <!-- About Me Section -->
+  <section id="about" class="hero">
+    <h1>Hi, I’m Delta!</h1>
+    <h2>UX Designer + Innovation enthusiast</h2>
+    <p>I’m a graphic designer transitioning into UX design with a strong foundation in client-focused design and recent training in UX through Google Coursera. Over the past five years, I’ve been freelancing - working with illustration, artworks, logo design, branding, NFT projects, media, print etc.</p>
+    <p>I developed a passion for UX because it allows me to create experiences that are not just visually compelling but also interactive and engaging. UX design allows me to craft solutions that people don’t simply look at—they actively engage with them.</p>
+    <p>When I’m not designing, I’m usually creating or exploring. Whether it’s travelling, playing piano and guitar, learning a new language (at the moment it’s Swedish), jewellery-making, or embroidery, I’m always seeking new experiences, looking for opportunities to grow and embracing my creative side. I’ve got a curious soul and a love for turning ideas into reality.</p>
+    <div class="about-images">
+      <img id="profile-img" src="delta-profile.jpg" alt="Delta's Profile Picture">
+      <img id="totoro-img" src="delta-totoro.jpg" alt="Delta with Totoro">
+      <img id="jewellery-img" src="jewellery1.jpg" alt="Delta's Jewellery Creation">
+    </div>
   </section>
 
+  <!-- Footer Placeholder -->
   <footer id="footer-placeholder"></footer>
 
+  <!-- JavaScript for loading nav and footer -->
   <script>
     fetch('nav.html')
       .then(response => response.text())
@@ -29,7 +72,7 @@
     fetch('footer.html')
       .then(response => response.text())
       .then(data => {
-        document.getElementById('footer-placeholder').innerHTML = data;
+        document.getElementById('footer-placeholder').innerHTML = data);
       });
 
     function toggleMode() {
