@@ -1,28 +1,85 @@
-/* styles.css */
-/* Paste all your original CSS here from the <style> tag */
-/* Example (replace with your actual CSS): */
+/* General Styles */
 :root {
   --primary-color: #007bff;
   --text-color: #333;
   --bg-color: #fff;
-  /* ...and so on */
+  --dark-bg-color: #222;
+  --dark-text-color: #fff;
 }
 
-/* Navigation styles */
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark-mode {
+  background-color: var(--dark-bg-color);
+  color: var(--dark-text-color);
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Navigation */
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  /* ... */
+  background-color: var(--bg-color);
 }
 
-/* Dark mode */
-body.dark-mode {
-  background-color: #222;
-  color: #fff;
-  /* ... */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
 }
 
-/* Hero, projects, footer styles, etc. */
-/* Ensure all your original styles are copied here */
+nav a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+nav a:hover {
+  color: var(--primary-color);
+}
+
+/* Hero Section */
+.hero {
+  padding: 4rem;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+}
+
+/* Projects Section */
+.projects {
+  padding: 2rem;
+}
+
+.project-card {
+  margin-bottom: 2rem;
+}
+
+/* Footer */
+footer {
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode nav {
+  background-color: var(--dark-bg-color);
+}
+
+body.dark-mode nav a {
+  color: var(--dark-text-color);
+}
