@@ -3,337 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Me - Delta</title>
-  <style>
-    /* General Styles */
-    :root {
-      --light-bg: #faf8f0; /* Warm beige with yellow/orange tone */
-      --dark-bg: #333;
-      --neutral-color: #333;
-      --transition-speed: 0.3s;
-    }
-
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: var(--light-bg);
-      color: var(--neutral-color);
-      transition: background var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode {
-      background: var(--dark-bg);
-      color: #f9f9f9;
-    }
-
-    body.dark-mode .tagline {
-      color: #ccc;
-    }
-
-    /* Header and Navigation */
-    header {
-      position: sticky;
-      top: 0;
-      background-color: var(--light-bg);
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode header {
-      background-color: var(--dark-bg);
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 2rem;
-    }
-
-    nav ul li {
-      position: relative;
-    }
-
-    nav ul li a {
-      text-decoration: none;
-      color: var(--neutral-color);
-      font-weight: bold;
-      padding-bottom: 5px;
-      transition: color var(--transition-speed);
-    }
-
-    nav ul li a::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 3px;
-      background-color: var(--neutral-color);
-      transition: width var(--transition-speed), transform var(--transition-speed);
-    }
-
-    nav ul li a:hover::after {
-      width: 100%;
-      transform: translateY(5px);
-    }
-
-    nav ul li a.current-page {
-      color: var(--neutral-color);
-    }
-
-    body.dark-mode nav ul li a.current-page {
-      color: #999;
-    }
-
-    .logo {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.2rem;
-      font-weight: bold;
-      padding-left: 1rem;
-    }
-
-    .mode-toggle {
-      background: transparent;
-      border: 2px solid var(--neutral-color);
-      color: var(--neutral-color);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: transform var(--transition-speed), border-color var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode .mode-toggle {
-      border-color: #999;
-      color: #999;
-    }
-
-    .mode-toggle:hover {
-      transform: scale(1.1);
-    }
-
-    /* Main Content */
-    main {
-      padding: 2rem 4rem; /* Increased left padding */
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .tagline {
-      font-size: 1.2rem;
-      color: #666;
-      margin-bottom: 2rem;
-    }
-
-    p {
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Layout */
-    #about-me, #personal-touch {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      margin-bottom: 4rem;
-    }
-
-    .intro-text, .personal-text {
-      flex: 1;
-    }
-
-    .intro-image, .personal-image {
-      flex: 1;
-      position: relative;
-    }
-
-    .intro-image img, .personal-image img {
-      width: 50%; /* Reduced image size */
-      border-radius: 10px;
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
-    }
-
-    .personal-image .overlap {
-      position: absolute;
-      bottom: -80px; /* Adjusted overlap to 80px */
-      right: -80px; /* Adjusted overlap to 80px */
-      width: 60%;
-      box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Image Hover Text */
-    .image-hover-text {
-      position: fixed;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      font-size: 0.9rem;
-      color: var(--neutral-color);
-      display: none;
-      pointer-events: none;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Animations */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 0.5s forwards;
-    }
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .grow {
-      opacity: 0;
-      transform: scale(0.8);
-      animation: growIn 0.5s forwards;
-    }
-
-    @keyframes growIn {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Interactivity */
-    .intro-image img:hover, .personal-image img:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .intro-image img:active, .personal-image img:active {
-      animation: wiggle 0.3s ease-in-out;
-    }
-
-    @keyframes wiggle {
-      0%, 100% {
-        transform: rotate(0deg);
-      }
-      25% {
-        transform: rotate(-5deg);
-      }
-      75% {
-        transform: rotate(5deg);
-      }
-    }
-
-    /* Responsiveness */
-    @media (max-width: 768px) {
-      #about-me, #personal-touch {
-        flex-direction: column;
-      }
-
-      .intro-image, .personal-image {
-        order: -1;
-        margin-bottom: 2rem;
-      }
-
-      .personal-image .overlap {
-        position: static;
-        width: 80%;
-        margin-top: -20px;
-      }
-    }
-  </style>
+  <title>About Me - Delta's UX/UI Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <header>
-    <nav>
-      <div class="logo">DA</div>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html" class="current-page">About Me</a></li>
-        <li><a href="mywork.html">My Work</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-      <button class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
-    </nav>
-  </header>
+  <header id="nav-placeholder"></header>
 
-  <!-- Main Content -->
-  <main>
-    <section id="about-me">
-      <!-- Introduction Section -->
-      <div class="intro-text">
-        <h1>Hi, I’m Delta!</h1>
-        <p class="tagline">UX Designer + Innovation enthusiast</p>
-        <p class="fade-in">I’m a graphic designer transitioning into UX design with a strong foundation in client-focused design and recent training in UX through Google Coursera. Over the past five years, I’ve been freelancing - working with illustration, artworks, logo design, branding, NFT projects, media, print etc.</p>
-        <p class="fade-in">I developed a passion for UX because it allows me to create experiences that are not just visually compelling but also interactive and engaging. UX design allows me to craft solutions that people don’t simply look at—they actively engage with them.</p>
-      </div>
-      <div class="intro-image">
-        <img src="Images/About Me/delta-profile.jpg" alt="A photo of Delta, a UX designer with a friendly smile." class="grow">
-      </div>
-    </section>
+  <!-- About Me Content -->
+  <section id="about">
+    <h1>About Me</h1>
+    <p><!-- Your about me content here --></p>
+  </section>
 
-    <!-- Personal Touch Section -->
-    <section id="personal-touch">
-      <div class="personal-image">
-        <img src="Images/About Me/delta-totoro.jpg" alt="Delta with a Totoro illustration." class="grow">
-        <img src="Images/About Me/jewellery1.jpg" alt="Delta's handmade jewelry." class="overlap grow">
-      </div>
-      <div class="personal-text">
-        <p class="fade-in">When I’m not designing, I’m usually creating or exploring. Whether it’s travelling, playing piano and guitar, learning a new language (at the moment it’s Swedish), jewellery-making, or embroidery, I’m always seeking new experiences, looking for opportunities to grow and embracing my creative side. I’ve got a curious soul and a love for turning ideas into reality.</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- Hover Text Box -->
-  <div class="image-hover-text">Hey! It's me, Delta</div>
+  <footer id="footer-placeholder"></footer>
 
   <script>
-    // Light/Dark Mode Toggle
+    fetch('nav.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('nav-placeholder').innerHTML = data;
+        updateCurrentPage();
+      });
+
+    fetch('footer.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('footer-placeholder').innerHTML = data;
+      });
+
     function toggleMode() {
       const body = document.body;
       const modeToggle = document.querySelector('.mode-toggle');
       body.classList.toggle('dark-mode');
       modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
-      localStorage.setItem('dark-mode', body.classList.contains('dark-mode'));
     }
 
-    // Check for saved dark mode preference
-    const savedDarkMode = localStorage.getItem('dark-mode') === 'true';
-    if (savedDarkMode) {
-      document.body.classList.add('dark-mode');
-      document.querySelector('.mode-toggle').textContent = 'Light Mode';
+    function updateCurrentPage() {
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const navLinks = document.querySelectorAll('nav ul li a');
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPage) {
+          link.classList.add('current-page');
+        }
+      });
     }
-
-    // Hover Text Follows Cursor
-    const hoverText = document.querySelector('.image-hover-text');
-    const images = document.querySelectorAll('.intro-image img, .personal-image img');
-
-    images.forEach((image) => {
-      image.addEventListener('mousemove', (e) => {
-        hoverText.style.display = 'block';
-        hoverText.style.left = `${e.pageX + 10}px`;
-        hoverText.style.top = `${e.pageY + 10}px`;
-      });
-
-      image.addEventListener('mouseleave', () => {
-        hoverText.style.display = 'none';
-      });
-    });
   </script>
 </body>
 </html>
