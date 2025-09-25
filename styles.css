@@ -1,15 +1,9 @@
-/* styles.css - Inspired by Drimify's clean, modern, center-aligned design */
-/* Font: Poppins (sans-serif, modern and friendly) */
-/* Color Palette: 
-   - Primary background: White (#FFFFFF) for light mode, dark gray (#1A1A1A) for dark mode
-   - Text: Dark (#333333) light mode, light (#E0E0E0) dark mode
-   - Accents: Blue (#007BFF) for CTAs/links, Orange (#FF6600) for highlights, Green (#28A745) for success/secondary
-   - Borders/Shadows: Subtle grays (#DEE2E6)
-*/
-/* Border Radius: 12px for cards and buttons (rounded, playful feel) */
-/* Layout: Center-aligned sections, max-width 1200px, grid for cards (responsive 1-3 columns) */
-/* Animations: Bouncy hovers (scale + bounce), smooth transitions */
-/* Overall Vibe: Modern, clean, playful with exaggerated fun elements */
+/* styles.css - Updated with Wolff Olins-inspired navigation: fixed, shrinking on scroll, smooth transition */
+/* Keeping Drimify elements but overriding nav for new style: black bg, white text, flex layout, shrink animation */
+/* Nav: Fixed top, initial height tall, shrinks on scroll, logo left, links right */
+/* Colors: Black bg (#000), white text (#fff) - adjust for dark mode */
+/* Font: Poppins, sizes reduce on scroll */
+/* Transition: height, padding, font-size 0.3s ease */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
@@ -25,6 +19,13 @@
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
   --transition: all 0.3s ease;
+  --nav-bg: #000000; /* Wolff Olins black bg */
+  --nav-text: #FFFFFF; /* White text */
+  --nav-height-initial: 80px; /* Initial tall height */
+  --nav-height-scrolled: 60px; /* Shrunk height */
+  --logo-size-initial: 24px;
+  --logo-size-scrolled: 20px;
+  --link-padding: 0 15px;
 }
 
 body.dark-mode {
@@ -34,6 +35,8 @@ body.dark-mode {
   --text-secondary: #A0A0A0;
   --border-color: #444444;
   --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --nav-bg: #000000; /* Keep black for consistency, or adjust if needed */
+  --nav-text: #FFFFFF;
 }
 
 body {
@@ -52,121 +55,123 @@ body {
   padding: 0 20px;
 }
 
-/* Navigation - Sticky, center-aligned links, bouncy hover */
+/* Navigation - Fixed, shrinking on scroll, Wolff Olins style */
 nav {
-  position: sticky;
+  position: fixed;
   top: 0;
-  background-color: var(--primary-bg);
-  box-shadow: var(--shadow);
-  padding: 15px 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--nav-bg);
+  color: var(--nav-text);
+  height: var(--nav-height-initial);
+  display: flex;
+  align-items: center;
   z-index: 1000;
-  transition: var(--transition);
+  transition: height var(--transition), padding var(--transition);
+  padding: 0 20px;
+}
+
+nav.scrolled {
+  height: var(--nav-height-scrolled);
+  box-shadow: var(--shadow);
 }
 
 nav .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  transition: var(--transition);
 }
 
 .logo {
-  font-size: 24px;
+  font-size: var(--logo-size-initial);
   font-weight: 700;
-  color: var(--accent-blue);
+  color: var(--nav-text);
+  transition: font-size var(--transition);
+}
+
+nav.scrolled .logo {
+  font-size: var(--logo-size-scrolled);
 }
 
 nav ul {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 0;
   margin: 0;
   padding: 0;
 }
 
 nav ul li a {
   text-decoration: none;
-  color: var(--text-primary);
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+  color: var(--nav-text);
+  font-weight: 400;
+  padding: var(--link-padding);
+  font-size: 16px;
+  transition: var(--transition), opacity 0.2s ease;
 }
 
-nav ul li a:hover,
-nav ul li a.current-page {
-  background-color: var(--accent-blue);
-  color: #FFFFFF;
-  transform: scale(1.05); /* Slight bounce on hover */
-  animation: bounce 0.3s ease;
+nav ul li a:hover {
+  opacity: 0.7; /* Subtle hover fade, like minimal designs */
 }
 
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+nav.scrolled ul li a {
+  font-size: 14px; /* Slight shrink */
 }
 
 .mode-toggle {
-  background-color: var(--accent-orange);
-  color: #FFFFFF;
-  border: none;
-  padding: 8px 16px;
-  border-radius: var(--border-radius);
+  background-color: transparent;
+  color: var(--nav-text);
+  border: 1px solid var(--nav-text);
+  padding: 6px 12px;
+  border-radius: 20px; /* Pill shape for modern feel */
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 400;
   transition: var(--transition);
+  margin-left: 20px;
 }
 
 .mode-toggle:hover {
-  background-color: darken(var(--accent-orange), 10%);
-  transform: scale(1.05);
-  animation: bounce 0.3s ease;
+  opacity: 0.7;
 }
 
-/* Hero Section - Center-aligned, bold headings, playful CTA */
-.hero {
-  text-align: center;
-  padding: 100px 20px;
-  background-color: var(--secondary-bg);
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+nav.scrolled .mode-toggle {
+  padding: 4px 10px;
+  font-size: 14px;
 }
 
-.hero h1 {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: var(--text-primary);
-}
-
-.hero p {
-  font-size: 24px;
-  margin-bottom: 40px;
-  color: var(--text-secondary);
-}
-
-.cta {
-  display: inline-flex;
-  align-items: center;
-  background-color: var(--accent-blue);
-  color: #FFFFFF;
-  padding: 12px 24px;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  text-decoration: none;
+/* Add search icon, inspired by Wolff Olins */
+.search-icon {
+  color: var(--nav-text);
+  font-size: 18px;
+  margin-left: 20px;
+  cursor: pointer;
   transition: var(--transition);
 }
 
-.cta:hover {
-  background-color: darken(var(--accent-blue), 10%);
-  transform: translateY(-5px); /* Bouncy lift */
-  animation: bounce 0.3s ease;
+nav.scrolled .search-icon {
+  font-size: 16px;
 }
 
-.cta .arrow {
-  margin-left: 10px;
-  font-size: 20px;
+.search-icon:hover {
+  opacity: 0.7;
 }
 
-/* Projects Section - Grid cards, center-aligned, hover effects */
+/* Hero Section - Adjusted padding to account for fixed nav */
+.hero {
+  text-align: center;
+  padding: calc(var(--nav-height-initial) + 100px) 20px 100px;
+  background-color: var(--secondary-bg);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  transition: padding var(--transition);
+}
+
+body.scrolled .hero {
+  padding-top: calc(var(--nav-height-scrolled) + 100px);
+}
+
+/* Projects Section - Unchanged */
 .projects {
   padding: 60px 20px;
   text-align: center;
@@ -177,6 +182,12 @@ nav ul li a.current-page {
   margin-bottom: 40px;
 }
 
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
 .project-card {
   background-color: var(--primary-bg);
   border: 1px solid var(--border-color);
@@ -184,25 +195,12 @@ nav ul li a.current-page {
   overflow: hidden;
   box-shadow: var(--shadow);
   transition: var(--transition);
-  max-width: 400px;
-  margin: 0 auto 30px;
-}
-
-@media (min-width: 768px) {
-  .projects {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
-  .project-card {
-    margin: 0;
-  }
 }
 
 .project-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  animation: wobble 0.5s ease; /* Exaggerated fun wobble */
+  animation: wobble 0.5s ease;
 }
 
 @keyframes wobble {
@@ -235,7 +233,7 @@ nav ul li a.current-page {
   color: var(--text-secondary);
 }
 
-/* Footer - Simple center-aligned */
+/* Footer - Unchanged */
 footer {
   text-align: center;
   padding: 20px;
@@ -251,4 +249,46 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* Media Queries for Mobile - Add hamburger for small screens */
+@media (max-width: 768px) {
+  nav .container {
+    flex-wrap: wrap;
+  }
+
+  nav ul {
+    display: none; /* Hide links, show hamburger */
+  }
+
+  /* Add hamburger icon - you'll need to add HTML for it */
+  .hamburger {
+    display: block;
+    cursor: pointer;
+    color: var(--nav-text);
+    font-size: 24px;
+  }
+
+  nav ul.active {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--nav-bg);
+    position: absolute;
+    top: var(--nav-height-initial);
+    left: 0;
+    padding: 20px;
+  }
+
+  nav.scrolled ul.active {
+    top: var(--nav-height-scrolled);
+  }
+
+  nav ul li {
+    margin-bottom: 10px;
+  }
+
+  .mode-toggle {
+    margin-left: auto;
+  }
 }
