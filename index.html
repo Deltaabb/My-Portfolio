@@ -1,20 +1,18 @@
-<!-- index.html - Updated homepage with Drimify-inspired structure: center-aligned, grid cards, playful animations -->
+<!-- index.html - Updated with scroll listener for nav shrink, fixed nav support -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Delta's UX/UI Portfolio</title>
-  <!-- Google Fonts: Poppins (matches Drimify's modern sans-serif) -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Link to new external CSS -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navigation Placeholder (loads nav.html) -->
+  <!-- Navigation Placeholder -->
   <header id="nav-placeholder"></header>
 
-  <!-- Hero Section: Center-aligned, bold, with bouncy CTA -->
+  <!-- Hero Section -->
   <section id="home" class="hero">
     <div class="container">
       <h1>Innovate with Delta: Designs that look great, feel natural, and actually work. No fluff, just good design.</h1>
@@ -26,11 +24,11 @@
     </div>
   </section>
 
-  <!-- Projects Section: Grid of cards, inspired by Drimify's solution cards -->
+  <!-- Projects Section -->
   <section id="work" class="projects">
     <div class="container">
-      <h2>My Projects</h2> <!-- Added h2 for section title, like Drimify sections -->
-      <div class="project-grid"> <!-- Wrapper for grid -->
+      <h2>My Projects</h2>
+      <div class="project-grid">
         <div class="project-card">
           <img src="mias1.png" alt="Mia’s Patisserie - Mobile food menu and ordering app">
           <div>
@@ -56,20 +54,27 @@
     </div>
   </section>
 
-  <!-- Footer Placeholder (loads footer.html - create if needed) -->
+  <!-- Footer Placeholder -->
   <footer id="footer-placeholder"></footer>
 
-  <!-- JavaScript: Load nav/footer, toggle mode, update current page -->
   <script>
     // Load Navigation
     fetch('nav.html')
       .then(response => response.text())
       .then(data => {
         document.getElementById('nav-placeholder').innerHTML = data;
-        updateCurrentPage(); // Highlight current page after nav loads
+        updateCurrentPage();
+        // Add hamburger toggle if on mobile
+        const hamburger = document.querySelector('.hamburger');
+        const navUl = document.querySelector('nav ul');
+        if (hamburger) {
+          hamburger.addEventListener('click', () => {
+            navUl.classList.toggle('active');
+          });
+        }
       });
 
-    // Load Footer (assuming footer.html exists; if not, create a simple one)
+    // Load Footer
     fetch('footer.html')
       .then(response => response.text())
       .then(data => {
@@ -84,7 +89,7 @@
       modeToggle.textContent = body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
     }
 
-    // Highlight current page based on URL
+    // Highlight current page
     function updateCurrentPage() {
       const currentPage = window.location.pathname.split('/').pop() || 'index.html';
       const navLinks = document.querySelectorAll('nav ul li a');
@@ -94,6 +99,16 @@
         }
       });
     }
+
+    // Scroll listener for nav shrink
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) { // Shrink after scrolling 50px
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
   </script>
 </body>
 </html>
